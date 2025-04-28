@@ -1,0 +1,3151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sort Battle - Interactive Comparison of 14 Sorting Algorithms</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#4f46e5',secondary:'#6366f1'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<meta name="description" content="Sort Battle: Interactive tool comparing 14 sorting algorithms with performance metrics like execution time, comparison count, and memory usage. Ideal for education and algorithm understanding.">
+<meta name="keywords" content="sorting algorithms, bubble sort, quick sort, merge sort, algorithm visualization, algorithm comparison, sorting performance, computer science, learn programming">
+<meta name="author" content="TekarlDev">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph Tags for better social media integration -->
+<meta property="og:title" content="Sort Battle - Interactive Sorting Algorithm Comparison Tool">
+<meta property="og:description" content="Interactive tool comparing 14 different sorting algorithms with detailed performance metrics.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sortbattle.web.app/">
+<meta property="og:image" content="https://sortbattle.web.app/preview.png">
+
+<!-- Twitter Card Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sort Battle - Interactive Sorting Algorithm Comparison Tool">
+<meta name="twitter:description" content="Interactive tool comparing 14 different sorting algorithms with detailed performance metrics.">
+<meta name="twitter:image" content="https://sortbattle.web.app/preview.png">
+
+<!-- Canonical URL to avoid duplicate content -->
+<link rel="canonical" href="https://sortbattle.web.app/">
+
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Inter', sans-serif;
+background-color: #f9fafb;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+input[type="number"] {
+-moz-appearance: textfield;
+}
+.custom-range {
+-webkit-appearance: none;
+width: 100%;
+height: 6px;
+background: #e5e7eb;
+border-radius: 5px;
+outline: none;
+}
+.custom-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+background: #4f46e5;
+border-radius: 50%;
+cursor: pointer;
+}
+.custom-range::-moz-range-thumb {
+width: 18px;
+height: 18px;
+background: #4f46e5;
+border-radius: 50%;
+cursor: pointer;
+border: none;
+}
+.custom-checkbox {
+display: grid;
+grid-template-columns: 1em auto;
+gap: 0.5em;
+align-items: center;
+}
+.custom-checkbox input[type="checkbox"] {
+-webkit-appearance: none;
+appearance: none;
+background-color: #fff;
+margin: 0;
+width: 1.15em;
+height: 1.15em;
+border: 2px solid #d1d5db;
+border-radius: 0.15em;
+display: grid;
+place-content: center;
+}
+.custom-checkbox input[type="checkbox"]:checked {
+background-color: #4f46e5;
+border-color: #4f46e5;
+}
+.custom-checkbox input[type="checkbox"]::before {
+content: "";
+width: 0.65em;
+height: 0.65em;
+transform: scale(0);
+transition: 120ms transform ease-in-out;
+box-shadow: inset 1em 1em white;
+transform-origin: center;
+clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+.custom-checkbox input[type="checkbox"]:checked::before {
+transform: scale(1);
+}
+.custom-radio {
+display: grid;
+grid-template-columns: 1em auto;
+gap: 0.5em;
+align-items: center;
+}
+.custom-radio input[type="radio"] {
+-webkit-appearance: none;
+appearance: none;
+background-color: #fff;
+margin: 0;
+width: 1.15em;
+height: 1.15em;
+border: 2px solid #d1d5db;
+border-radius: 50%;
+display: grid;
+place-content: center;
+}
+.custom-radio input[type="radio"]:checked {
+border-color: #4f46e5;
+}
+.custom-radio input[type="radio"]::before {
+content: "";
+width: 0.65em;
+height: 0.65em;
+border-radius: 50%;
+transform: scale(0);
+transition: 120ms transform ease-in-out;
+background-color: #4f46e5;
+}
+.custom-radio input[type="radio"]:checked::before {
+transform: scale(1);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 40px;
+height: 20px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #e5e7eb;
+transition: .4s;
+border-radius: 34px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 16px;
+width: 16px;
+left: 2px;
+bottom: 2px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #4f46e5;
+}
+input:checked + .slider:before {
+transform: translateX(20px);
+}
+.toast {
+animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+position: fixed;
+z-index: 100;
+}
+@keyframes slideIn {
+from { transform: translateY(-100%); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeOut {
+from { opacity: 1; }
+to { opacity: 0; visibility: hidden; }
+}
+
+/* Hilfstile für die Tabellendarstellung */
+.table-responsive th, .table-responsive td {
+  transition: width 0.3s ease, display 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .custom-switch {
+    transform: scale(0.8);
+  }
+}
+
+/* Prose styling for Markdown content */
+.prose {
+    color: #374151;
+    max-width: 65ch;
+  }
+  .prose h1 {
+    color: #111827;
+    font-weight: 700;
+    font-size: 1.875em;
+    margin-top: 0;
+    margin-bottom: 0.8888889em;
+    line-height: 1.1111111;
+  }
+  .prose h2 {
+    color: #111827;
+    font-weight: 600;
+    font-size: 1.5em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    line-height: 1.3333333;
+  }
+  .prose h3 {
+    color: #111827;
+    font-weight: 600;
+    font-size: 1.25em;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+    line-height: 1.6;
+  }
+  .prose h4 {
+    color: #111827;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+  }
+  .prose p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+  .prose ul {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    list-style-type: disc;
+    padding-left: 1.625em;
+  }
+  .prose ol {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    list-style-type: decimal;
+    padding-left: 1.625em;
+  }
+  .prose li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+  .prose-sm {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .prose-sm h1 {
+    font-size: 1.7rem;
+    margin-bottom: 0.6rem;
+  }
+  .prose-sm h2 {
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+  }
+  .prose-sm h3 {
+    font-size: 1.1rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .max-w-none {
+    max-width: none;
+  }
+
+</style>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sort Battle - Sorting Algorithm Comparison Tool",
+    "description": "Interactive tool for comparing the performance of various sorting algorithms with detailed metrics like execution time, comparison count, and memory usage.",
+    "url": "https://sortbattle.web.app/",
+    "applicationCategory": "Education",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "TekarlDev",
+      "url": "https://tekarl-dev.web.app/"
+    }
+  }
+  </script>
+</head>
+<body>
+<div class="min-h-screen flex flex-col">
+<!-- Header -->
+<header class="w-full flex justify-between items-center bg-white shadow-sm py-4 px-6">
+  <!-- Links: Logo + Titel -->
+  <div class="flex items-center space-x-2">
+    <div class="w-10 h-10 flex items-center justify-center bg-primary rounded-full text-white">
+      <i class="ri-bar-chart-grouped-line ri-lg"></i>
+    </div>
+    <h1 class="text-2xl font-semibold text-gray-900">Sort Battle</h1>
+  </div>
+  <!-- Rechts: Doku-Button -->
+  <button id="show-docs-btn" class="flex items-center text-sm text-gray-600 hover:text-primary">
+    <i class="ri-book-open-line mr-1"></i>
+    <span class="hidden sm:inline">Documentation</span>
+  </button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col lg:flex-row h-[calc(100vh-72px)]">
+<!-- Configuration Panel -->
+<div class="w-full lg:w-80 xl:w-96 bg-white border-r border-gray-200 p-4 overflow-y-auto">
+<div class="space-y-4">
+<!-- Array Input Section -->
+<div>
+<h2 class="text-base font-medium text-gray-900 mb-2">Array Configuration</h2>
+<div class="space-y-4">
+<!-- Array Size -->
+<div>
+<label for="array-size" class="block text-sm font-medium text-gray-700 mb-1">Array Size</label>
+<div class="flex items-center space-x-3">
+<input type="range" id="array-size" min="1" max="50000" value="50" class="custom-range flex-1">
+<div class="relative">
+<input type="number" id="array-size-input" value="50" min="1" max="50000" class="w-20 py-1 px-2 border border-gray-300 rounded text-center text-sm">
+</div>
+</div>
+</div>
+<!-- Array Type -->
+<div>
+<label for="array-type" class="block text-sm font-medium text-gray-700 mb-1">Array Type</label>
+<div class="relative">
+<select id="array-type" class="block w-full pl-3 pr-8 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded">
+<option value="random">Random</option>
+<option value="sorted-asc">Sorted (Ascending)</option>
+<option value="sorted-desc">Sorted (Descending)</option>
+<option value="nearly-sorted">Nearly Sorted</option>
+<option value="uniform">Uniform Values</option>
+<option value="custom">Custom Input</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<!-- Custom Input (conditionally shown) -->
+<div id="custom-input-container" class="hidden">
+<label for="custom-array" class="block text-sm font-medium text-gray-700 mb-1">Custom Array Input</label>
+<div class="space-y-2">
+<textarea id="custom-array" rows="3" placeholder="Enter comma-separated values (e.g., 5, 3, 8, 1, 2)" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-primary focus:border-primary"></textarea>
+<div class="flex items-center">
+<span class="text-sm text-gray-500 mr-2">Or upload a file:</span>
+<label for="file-upload" class="cursor-pointer bg-white py-1 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none !rounded-button whitespace-nowrap">
+<span>Choose File</span>
+<input id="file-upload" name="file-upload" type="file" accept=".txt,.json" class="sr-only">
+</label>
+</div>
+<p id="file-name" class="text-xs text-gray-500 mt-1 hidden">No file selected</p>
+</div>
+</div>
+<!-- Generate Button -->
+<button id="generate-array" class="w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary !rounded-button whitespace-nowrap">
+Generate Array
+</button>
+</div>
+</div>
+<!-- Algorithm Selection -->
+<div>
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-lg font-medium text-gray-900">Select Algorithms</h2>
+<div class="flex space-x-2">
+<button id="select-all" class="text-xs text-primary hover:text-primary/80 !rounded-button whitespace-nowrap">Select All</button>
+<button id="clear-all" class="text-xs text-gray-500 hover:text-gray-700 !rounded-button whitespace-nowrap">Clear All</button>
+</div>
+</div>
+<div class="space-y-2">
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="bubble" checked>
+<span class="text-sm">Bubble Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="selection" checked>
+<span class="text-sm">Selection Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="insertion" checked>
+<span class="text-sm">Insertion Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="merge">
+<span class="text-sm">Merge Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="quick">
+<span class="text-sm">Quick Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="heap">
+<span class="text-sm">Heap Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="shell">
+<span class="text-sm">Shell Sort</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="algorithm" value="radix">
+<span class="text-sm">Radix Sort</span>
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="algorithm" value="counting">
+  <span class="text-sm">Counting Sort</span>
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="algorithm" value="bucket">
+  <span class="text-sm">Bucket Sort</span>
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="algorithm" value="tim">
+  <span class="text-sm">Tim Sort</span>
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="algorithm" value="cocktail">
+  <span class="text-sm">Cocktail Sort</span>
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="algorithm" value="comb">
+  <span class="text-sm">Comb Sort</span>
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="algorithm" value="gnome">
+  <span class="text-sm">Gnome Sort</span>
+</label>
+</div>
+</div>
+<!-- Visualization Options -->
+<div>
+<h2 class="text-base font-medium text-gray-900 mb-2">Visualization Options</h2>
+<div class="space-y-4">
+<!-- Display Type -->
+<!-- Performance Metrics -->
+<div>
+  <span class="block text-sm font-medium text-gray-700 mb-2">Performance Metrics</span>
+  <div class="space-y-2">
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-gray-600">Show Execution Time</span>
+      <label class="custom-switch">
+        <input type="checkbox" id="toggle-time" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-gray-600">Show Comparison Count</span>
+      <label class="custom-switch">
+        <input type="checkbox" id="toggle-comparisons" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-gray-600">Show Exchanges Count</span>
+      <label class="custom-switch">
+        <input type="checkbox" id="toggle-exchanges" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-gray-600">Show Memory Usage</span>
+      <label class="custom-switch">
+        <input type="checkbox" id="toggle-memory" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<!-- Control Buttons -->
+<div class="flex space-x-3">
+<button id="start-button" class="flex-1 bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary flex items-center justify-center !rounded-button whitespace-nowrap">
+<i class="ri-play-line mr-1"></i>
+Start Sorting
+</button>
+<button id="stop-button" class="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed !rounded-button whitespace-nowrap" disabled>
+<i class="ri-stop-line mr-1"></i>
+Stop
+</button>
+</div>
+</div>
+</div>
+<!-- Visualization Area -->
+<div class="flex-1 p-4 bg-gray-50 overflow-y-auto">
+<div class="space-y-4">
+<!-- Initial Array Display -->
+<div class="bg-white rounded-lg shadow p-3">
+<h2 class="text-base font-medium text-gray-900 mb-2">Initial Array</h2>
+<div id="initial-array-container" class="h-12 bg-white rounded-lg border border-gray-200">
+<!-- Initial array bars will be generated here -->
+</div>
+</div>
+<!-- Performance Results Table -->
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<div class="px-3 py-2 border-b border-gray-200 bg-white">
+<h2 class="text-base font-medium text-gray-900">Performance Results</h2>
+</div>
+<div class="overflow-x-auto bg-white">
+<table class="min-w-full divide-y divide-gray-200 table-fixed">
+<thead class="bg-gray-50 sticky top-0">
+<tr>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Algorithm</th>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Status</th>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Execution Time</th>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Comparisons</th>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Exchanges</th>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Memory Usage</th>
+<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Rank</th>
+</tr>
+</thead>
+<tbody id="results-table-body" class="bg-white divide-y divide-gray-200">
+<!-- Results will be populated here -->
+<tr>
+<td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+No data available yet
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<footer class="bg-white border-t border-gray-200 py-4 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-4 md:mb-0">
+        <p class="text-sm text-gray-500">© 2025 Sort Battle. All rights reserved.</p>
+      </div>
+      <div class="flex space-x-6">
+        <button id="show-terms-btn" class="text-sm text-gray-500 hover:text-primary">Terms of Use</button>
+        <button id="show-privacy-btn" class="text-sm text-gray-500 hover:text-primary">Privacy Policy</button>
+        <a href="https://github.com/TekarlDev/SortBattle" class="text-sm text-gray-500 hover:text-primary">Source Code</a>
+        <p class="text-sm text-gray-500">Crafted with passion by <a href="https://tekarl-dev.web.app" class="text-primary hover:text-primary/80">TekarlDev</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="modal-container" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+    <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
+      <h3 id="modal-title" class="text-lg font-medium text-gray-900">Modal Title</h3>
+      <button id="close-modal-btn" class="text-gray-400 hover:text-gray-500">
+        <i class="ri-close-line text-xl"></i>
+      </button>
+    </div>
+    <div id="modal-content" class="overflow-y-auto p-6 flex-grow">
+      <!-- Content will be loaded here -->
+    </div>
+    <div class="border-t border-gray-200 px-6 py-4 flex justify-end">
+      <button id="modal-close-btn" class="bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 !rounded-button">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Toast Notification Container -->
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// DOM Elements
+const MAX_ARRAY_SIZE = 50000; //  elements max
+const arraySizeSlider = document.getElementById('array-size');
+
+const arraySizeInput = document.getElementById('array-size-input');
+const arrayTypeSelect = document.getElementById('array-type');
+const customInputContainer = document.getElementById('custom-input-container');
+const customArrayInput = document.getElementById('custom-array');
+const fileUpload = document.getElementById('file-upload');
+const fileName = document.getElementById('file-name');
+const generateArrayBtn = document.getElementById('generate-array');
+const selectAllBtn = document.getElementById('select-all');
+const clearAllBtn = document.getElementById('clear-all');
+const algorithmCheckboxes = document.querySelectorAll('input[name="algorithm"]');
+const startButton = document.getElementById('start-button');
+const stopButton = document.getElementById('stop-button');
+const initialArrayContainer = document.getElementById('initial-array-container');
+const resultsTableBody = document.getElementById('results-table-body');
+const toastContainer = document.getElementById('toast-container');
+
+// State
+let currentArray = [];
+let sortingInProgress = false;
+let workers = {};
+let results = {};
+let sortingStartTime = 0;
+
+arraySizeSlider.setAttribute('max', MAX_ARRAY_SIZE);
+
+function enableControls() {
+  // Re-enable all controls
+  sortingInProgress = false;
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  generateArrayBtn.disabled = false;
+  generateArrayBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+  arraySizeSlider.disabled = false;
+  arrayTypeSelect.disabled = false;
+  customArrayInput.disabled = false;
+  fileUpload.disabled = false;
+
+  // Reset all algorithm checkboxes
+  algorithmCheckboxes.forEach(checkbox => {
+    checkbox.disabled = false;
+  });
+
+  // Reset array type select visibility
+  if (arrayTypeSelect.value === 'custom') {
+    customInputContainer.classList.remove('hidden');
+  } else {
+    customInputContainer.classList.add('hidden');
+  }
+}
+
+function updateComparisonCount(algorithm, count) {
+  const element = document.getElementById(`${algorithm}-comparisons`);
+  if (element) {
+    element.textContent = count.toLocaleString();
+  }
+}
+
+// Initialize with random array
+generateRandomArray();
+// Event Listeners
+arraySizeSlider.addEventListener('input', function() {
+arraySizeInput.value = this.value;
+});
+
+arraySizeSlider.addEventListener('change', function() {
+  arraySizeInput.value = this.value;
+});
+
+arraySizeInput.addEventListener('input', function() {
+  let value = parseInt(this.value);
+  
+  // Validiere den Wert
+  if (isNaN(value)) {
+    value = 50; // Standardwert
+  } else {
+    // Begrenze auf die gültigen Bereiche
+    value = Math.max(1, Math.min(value, MAX_ARRAY_SIZE));
+  }
+  
+  // Aktualisiere das Eingabefeld und den Slider
+  this.value = value;
+  arraySizeSlider.value = value;
+});
+arrayTypeSelect.addEventListener('change', function() {
+if (this.value === 'custom') {
+customInputContainer.classList.remove('hidden');
+} else {
+customInputContainer.classList.add('hidden');
+}
+});
+fileUpload.addEventListener('change', function() {
+if (this.files.length > 0) {
+fileName.textContent = this.files[0].name;
+fileName.classList.remove('hidden');
+const reader = new FileReader();
+reader.onload = function(e) {
+try {
+const fileContent = e.target.result;
+const fileExtension = fileUpload.files[0].name.split('.').pop().toLowerCase();
+if (fileExtension === 'json') {
+const jsonData = JSON.parse(fileContent);
+if (Array.isArray(jsonData)) {
+customArrayInput.value = jsonData.join(', ');
+} else {
+showToast('Invalid JSON format. Expected an array.', 'error');
+}
+} else {
+// Assume it's a text file with comma or space separated values
+const values = fileContent.replace(/\n/g, ' ').split(/[,\s]+/).filter(val => val.trim() !== '');
+customArrayInput.value = values.join(', ');
+}
+} catch (error) {
+showToast('Error reading file: ' + error.message, 'error');
+}
+};
+reader.readAsText(this.files[0]);
+}
+});
+generateArrayBtn.addEventListener('click', function() {
+if (!this.disabled) {
+this.disabled = true;
+generateArray();
+setTimeout(() => {
+this.disabled = false;
+}, 100);
+}
+});
+selectAllBtn.addEventListener('click', function() {
+algorithmCheckboxes.forEach(checkbox => {
+checkbox.checked = true;
+});
+});
+clearAllBtn.addEventListener('click', function() {
+algorithmCheckboxes.forEach(checkbox => {
+checkbox.checked = false;
+});
+});
+startButton.addEventListener('click', function() {
+const selectedAlgorithms = getSelectedAlgorithms();
+if (selectedAlgorithms.length === 0) {
+showToast('Please select at least one algorithm', 'warning');
+return;
+}
+startSorting();
+});
+stopButton.addEventListener('click', function() {
+stopSorting();
+});
+// Functions
+function generateArray() {
+  // Wenn eine Sortierung läuft, zuerst stoppen
+  if (sortingInProgress) {
+    stopSorting();
+    // Gib dem System Zeit, um sich zu bereinigen
+    setTimeout(() => {
+      actuallyGenerateArray();
+    }, 100);
+  } else {
+    actuallyGenerateArray();
+  }
+}
+
+// 5. Extrahiere den Hauptteil von generateArray in eine separate Funktion
+function actuallyGenerateArray() {
+  generateArrayBtn.disabled = true;
+  const arrayType = arrayTypeSelect.value;
+  const size = parseInt(arraySizeSlider.value);
+  
+  // Create an AbortController instance
+  const abortController = new AbortController();
+  const signal = abortController.signal;
+  
+  // Show loading spinner with cancel button
+  const loadingSpinner = document.createElement('div');
+  loadingSpinner.id = 'array-generation-spinner';
+  loadingSpinner.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+  loadingSpinner.innerHTML = `
+    <div class="bg-white rounded-lg p-6 flex flex-col items-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div>
+      <p class="text-gray-700 mb-4">Generating Array...</p>
+      <button id="abort-generation" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 !rounded-button whitespace-nowrap">
+        <i class="ri-close-line mr-1"></i>Cancel
+      </button>
+    </div>
+  `;
+  document.body.appendChild(loadingSpinner);
+  
+  // Add abort handler
+  const abortButton = document.getElementById('abort-generation');
+  if (abortButton) {
+    abortButton.addEventListener('click', () => {
+      abortController.abort();
+      const spinner = document.getElementById('array-generation-spinner');
+      if (spinner) {
+        spinner.remove();
+      }
+      showToast('Array generation cancelled', 'info');
+      generateArrayBtn.disabled = false;
+    });
+  }
+  
+  // Create a promise that generates the array
+  const generateArrayPromise = new Promise((resolve, reject) => {
+    if (arrayType === 'custom') {
+      try {
+        parseCustomArray();
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    } else {
+      const worker = createWorker(`
+        self.onmessage = function(e) {
+          const { type, size } = e.data;
+          let array;
+          switch (type) {
+            case 'random':
+              array = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
+              break;
+            case 'sorted-asc':
+              array = Array.from({length: size}, (_, i) => i + 1);
+              break;
+            case 'sorted-desc':
+              array = Array.from({length: size}, (_, i) => size - i);
+              break;
+            case 'nearly-sorted':
+              array = Array.from({length: size}, (_, i) => i + 1);
+              const swapsCount = Math.floor(size * 0.1);
+              for (let i = 0; i < swapsCount; i++) {
+                const idx1 = Math.floor(Math.random() * size);
+                const idx2 = Math.floor(Math.random() * size);
+                [array[idx1], array[idx2]] = [array[idx2], array[idx1]];
+              }
+              break;
+            case 'uniform':
+              const value = Math.floor(Math.random() * 10) + 1;
+              array = Array(size).fill(value);
+              for (let i = 0; i < size; i += 5) {
+                array[i] = Math.floor(Math.random() * 20) + 1;
+              }
+              break;
+          }
+          self.postMessage(array);
+        };
+      `);
+      
+      worker.onmessage = function(e) {
+        currentArray = e.data;
+        worker.terminate();
+        resolve();
+      };
+      
+      worker.postMessage({ type: arrayType, size });
+    }
+  });
+  
+  // Execute the generation with abort signal
+  generateArrayPromise
+    .then(() => {
+      if (!signal.aborted) {
+        displayInitialArray();
+        updateResultsTable([]); // Reset results table
+        results = {}; // Reset results
+        const spinner = document.getElementById('array-generation-spinner');
+        if (spinner) {
+          spinner.remove();
+        }
+        
+        // Wichtig: Button wieder aktivieren
+        generateArrayBtn.disabled = false;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+      }
+    })
+    .catch(error => {
+      if (!signal.aborted) {
+        showToast(error.message, 'error');
+        const spinner = document.getElementById('array-generation-spinner');
+        if (spinner) {
+          spinner.remove();
+        }
+        generateArrayBtn.disabled = false;
+      }
+    });
+  
+  // Listen for abort signal
+  signal.addEventListener('abort', () => {
+    generateArrayBtn.disabled = false;
+  });
+}
+function generateRandomArray() {
+const size = parseInt(arraySizeSlider.value);
+currentArray = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
+displayInitialArray();
+}
+function generateSortedArray(ascending) {
+const size = parseInt(arraySizeSlider.value);
+currentArray = Array.from({length: size}, (_, i) => i + 1);
+if (!ascending) {
+currentArray.reverse();
+}
+displayInitialArray();
+}
+function generateNearlySortedArray() {
+const size = parseInt(arraySizeSlider.value);
+currentArray = Array.from({length: size}, (_, i) => i + 1);
+// Swap about 10% of elements randomly
+const swapsCount = Math.floor(size * 0.1);
+for (let i = 0; i < swapsCount; i++) {
+const idx1 = Math.floor(Math.random() * size);
+const idx2 = Math.floor(Math.random() * size);
+[currentArray[idx1], currentArray[idx2]] = [currentArray[idx2], currentArray[idx1]];
+}
+displayInitialArray();
+}
+function generateUniformArray() {
+const size = parseInt(arraySizeSlider.value);
+const value = Math.floor(Math.random() * 10) + 1;
+currentArray = Array(size).fill(value);
+// Add some variation to make visualization more interesting
+for (let i = 0; i < size; i += 5) {
+currentArray[i] = Math.floor(Math.random() * 20) + 1;
+}
+displayInitialArray();
+}
+function parseCustomArray() {
+try {
+const input = customArrayInput.value.trim();
+if (!input) {
+showToast('Please enter values for the custom array', 'warning');
+return;
+}
+const values = input.split(/[,\s]+/).map(val => {
+const num = parseFloat(val.trim());
+if (isNaN(num)) {
+throw new Error(`Invalid value: ${val}`);
+}
+return num;
+});
+if (values.length < 2) {
+showToast('Please enter at least 2 values', 'warning');
+return;
+}
+if (values.length > MAX_ARRAY_SIZE) {
+showToast(`Maximum array size is ${MAX_ARRAY_SIZE.toLocaleString()}`, 'warning');
+currentArray = values.slice(0, MAX_ARRAY_SIZE);
+} else {
+currentArray = values;
+}
+displayInitialArray();
+} catch (error) {
+showToast(error.message, 'error');
+}
+}
+function displayInitialArray() {
+initialArrayContainer.innerHTML = '';
+const arrayContainer = document.createElement('div');
+arrayContainer.className = 'overflow-x-auto whitespace-nowrap py-3 px-4';
+const arrayContent = document.createElement('div');
+arrayContent.className = 'inline-flex items-center space-x-1';
+// Opening bracket
+const openBracket = document.createElement('span');
+openBracket.className = 'text-gray-600 text-sm';
+openBracket.textContent = '[';
+arrayContent.appendChild(openBracket);
+// Array elements
+currentArray.forEach((num, index) => {
+if (index > 0) {
+const comma = document.createElement('span');
+comma.className = 'text-gray-600 text-sm';
+comma.textContent = ',';
+arrayContent.appendChild(comma);
+}
+const number = document.createElement('span');
+number.className = 'text-gray-900 text-sm font-mono';
+number.textContent = num;
+arrayContent.appendChild(number);
+});
+// Closing bracket
+const closeBracket = document.createElement('span');
+closeBracket.className = 'text-gray-600 text-sm';
+closeBracket.textContent = ']';
+arrayContent.appendChild(closeBracket);
+arrayContainer.appendChild(arrayContent);
+initialArrayContainer.appendChild(arrayContainer);
+}
+function getSelectedAlgorithms() {
+const selected = [];
+algorithmCheckboxes.forEach(checkbox => {
+if (checkbox.checked) {
+selected.push(checkbox.value);
+}
+});
+return selected;
+}
+function startSorting() {
+const selectedAlgorithms = getSelectedAlgorithms();
+if (selectedAlgorithms.length === 0) {
+showToast('Please select at least one algorithm', 'warning');
+return;
+}
+if (sortingInProgress) {
+// If sorting is in progress, stop current sorting first
+stopSorting();
+// Wait a brief moment before starting new sort
+setTimeout(() => {
+initiateNewSort(selectedAlgorithms);
+}, 100);
+} else {
+initiateNewSort(selectedAlgorithms);
+}
+// Disable all controls during sorting
+arraySizeSlider.disabled = true;
+arrayTypeSelect.disabled = true;
+customArrayInput.disabled = true;
+fileUpload.disabled = true;
+generateArrayBtn.disabled = true;
+generateArrayBtn.classList.add('opacity-50', 'cursor-not-allowed');
+algorithmCheckboxes.forEach(checkbox => {
+checkbox.disabled = true;
+});
+}
+function initiateNewSort(selectedAlgorithms) {
+sortingInProgress = true;
+sortingStartTime = Date.now();
+startButton.disabled = true;
+stopButton.disabled = false;
+generateArrayBtn.disabled = true;
+// Reset results
+results = {};
+// Reset workers
+workers = {};
+// Clear any previous toast messages
+const existingToasts = document.querySelectorAll('.toast');
+existingToasts.forEach(toast => toast.remove());
+// Prepare visualization container
+// Prepare results table
+updateResultsTable(selectedAlgorithms);
+// Start sorting with each selected algorithm
+selectedAlgorithms.forEach(algorithm => {
+runSortingAlgorithm(algorithm, [...currentArray]);
+});
+showToast('Starting new sorting process...', 'info');
+}
+function stopSorting() {
+  if (!sortingInProgress) return;
+  
+  // Terminate all workers
+  Object.values(workers).forEach(worker => {
+    if (worker) {
+      worker.terminate();
+    }
+  });
+  
+  // Clear workers
+  workers = {};
+  
+  // Enable all controls
+  enableControls();
+  
+  // Update status in results table
+  const rows = resultsTableBody.querySelectorAll('tr');
+  rows.forEach(row => {
+    const statusCell = row.querySelector('td:nth-child(2)');
+    if (statusCell && statusCell.textContent.trim() === 'Running') {
+      statusCell.innerHTML = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Stopped</span>';
+    }
+  });
+  
+  showToast('Sorting stopped', 'info');
+}
+
+function updateResultsTable(algorithms = []) {
+resultsTableBody.innerHTML = '';
+if (algorithms.length === 0) {
+resultsTableBody.innerHTML = `
+<tr>
+<td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+No data available yet
+</td>
+</tr>
+`;
+
+applyColumnVisibilitySettings();
+return;
+}
+
+// Hilfsfunktion zur Anwendung der Sichtbarkeitseinstellungen auf neue Tabellenzeilen
+function applyColumnVisibilitySettings() {
+  const columnToggles = {
+    'toggle-time': 2,
+    'toggle-comparisons': 3,
+    'toggle-exchanges': 4,
+    'toggle-memory': 5
+  };
+  
+  Object.keys(columnToggles).forEach(toggleId => {
+    const checkbox = document.getElementById(toggleId);
+    if (checkbox && !checkbox.checked) {
+      const columnIndex = columnToggles[toggleId];
+      
+      // Spaltenüberschrift ausblenden
+      const headerCells = document.querySelectorAll('table thead th');
+      if (headerCells.length > columnIndex) {
+        headerCells[columnIndex].style.display = 'none';
+      }
+      
+      // Alle Zellen in dieser Spalte ausblenden
+      const rows = document.querySelectorAll('table tbody tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length > columnIndex) {
+          cells[columnIndex].style.display = 'none';
+        }
+      });
+    }
+  });
+}
+
+algorithms.forEach(algo => {
+const row = document.createElement('tr');
+row.id = `${algo}-result-row`;
+const result = results[algo] || {};
+const status = result.time ? 'Completed' : 'Running';
+const statusClass = status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+const time = result.time ? `${result.time.toFixed(2)} ms` : '-';
+const comparisons = result.comparisons ? result.comparisons.toLocaleString() : '0';
+const exchanges = result.swaps ? result.swaps.toLocaleString() : '0';
+const memory = result.memory ? `${result.memory} bytes` : '-';
+const rank = result.rank ? `${result.rank}${getRankSuffix(result.rank)}` : '-';
+row.innerHTML = `
+<td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+${getAlgorithmName(algo)}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+${status}
+</span>
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-time">
+${time}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-comparisons">
+${comparisons}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-exchanges">
+${result.swaps ? result.swaps.toLocaleString() : '0'}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-memory">
+${memory}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-rank">
+${rank}
+</td>
+`;
+resultsTableBody.appendChild(row);
+});
+}
+function runSortingAlgorithm(algorithm, array) {
+// Create a web worker for this algorithm
+const worker = createWorker(`
+// Sorting algorithms implementation
+const algorithms = {
+bubble: function(arr) {
+  const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  let swapped = false;
+  
+  for (let i = 0; i < n; i++) {
+    swapped = false; // Reset swapped flag für diese Iteration
+    
+    for (let j = 0; j < n - i - 1; j++) {
+      comparisons++;
+      steps.push({type: 'compare', indices: [j, j+1]});
+      
+      if (arr[j] > arr[j+1]) {
+        // Swap
+        [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+        swaps++;
+        swapped = true; // Markiere als getauscht
+        steps.push({type: 'swap', indices: [j, j+1], values: [arr[j], arr[j+1]]});
+      }
+      
+      // Only send final update
+      if (steps.length >= 10000) {
+        self.postMessage({
+          type: 'progress',
+          array: [...arr],
+          comparisons,
+          steps: []
+        });
+        steps.length = 0;
+      }
+    }
+    
+    // Wenn in dieser Iteration kein Tausch stattfand, ist das Array bereits sortiert
+    if (!swapped) {
+      break;
+    }
+  }
+  
+  // Send any remaining steps
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: []
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons,
+    swaps
+  };
+},
+selection: function(arr) {
+const n = arr.length;
+let comparisons = 0;
+let swaps = 0;
+const steps = [];
+for (let i = 0; i < n - 1; i++) {
+let minIdx = i;
+for (let j = i + 1; j < n; j++) {
+comparisons++;
+steps.push({type: 'compare', indices: [minIdx, j]});
+if (arr[j] < arr[minIdx]) {
+minIdx = j;
+}
+}
+if (minIdx !== i) {
+// Swap
+[arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+swaps++;
+steps.push({type: 'swap', indices: [i, minIdx], values: [arr[i], arr[minIdx]]});
+}
+// Only send final update
+if (steps.length >= 1000) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: []
+});
+steps.length = 0;
+}
+}
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+insertion: function(arr) {
+const n = arr.length;
+let comparisons = 0;
+let swaps = 0;
+const steps = [];
+for (let i = 1; i < n; i++) {
+let key = arr[i];
+let j = i - 1;
+steps.push({type: 'select', index: i, value: key});
+
+// Vergleich findet immer statt, auch wenn die Schleife nicht betreten wird
+    if (j >= 0) {
+      comparisons++;
+      steps.push({type: 'compare', indices: [j, i]});
+    }
+
+while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      swaps++;
+      steps.push({type: 'move', fromIndex: j, toIndex: j+1, value: arr[j]});
+      j--;
+      
+      // Nächster Vergleich, falls die Schleife noch einmal durchläuft
+      if (j >= 0) {
+        comparisons++;
+        steps.push({type: 'compare', indices: [j, i]});
+      }
+      
+      // Only send final update
+      if (steps.length >= 10000) {
+        self.postMessage({
+          type: 'progress',
+          array: [...arr],
+          comparisons,
+          steps: []
+        });
+        steps.length = 0;
+      }
+    }
+    
+    if (j + 1 !== i) {
+      arr[j + 1] = key;
+      steps.push({type: 'insert', index: j+1, value: key});
+    }
+  }
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+merge: function(arr) {
+const n = arr.length;
+let comparisons = 0;
+let swaps = 0;
+const steps = [];
+function merge(arr, left, mid, right) {
+const n1 = mid - left + 1;
+const n2 = right - mid;
+// Create temp arrays
+const L = new Array(n1);
+const R = new Array(n2);
+// Copy data to temp arrays
+for (let i = 0; i < n1; i++) {
+L[i] = arr[left + i];
+}
+for (let j = 0; j < n2; j++) {
+R[j] = arr[mid + 1 + j];
+}
+// Merge the temp arrays back
+let i = 0, j = 0, k = left;
+while (i < n1 && j < n2) {
+comparisons++;
+steps.push({type: 'compare', indices: [left + i, mid + 1 + j]});
+if (L[i] <= R[j]) {
+arr[k] = L[i];
+steps.push({type: 'insert', index: k, value: L[i]});
+i++;
+} else {
+arr[k] = R[j];
+steps.push({type: 'insert', index: k, value: R[j]});
+j++;
+}
+k++;
+swaps++;
+// Only send final update
+if (steps.length >= 10000) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: []
+});
+steps.length = 0;
+}
+}
+// Copy remaining elements
+while (i < n1) {
+arr[k] = L[i];
+steps.push({type: 'insert', index: k, value: L[i]});
+i++;
+k++;
+swaps++;
+}
+while (j < n2) {
+arr[k] = R[j];
+steps.push({type: 'insert', index: k, value: R[j]});
+j++;
+k++;
+swaps++;
+}
+}
+function mergeSort(arr, left, right) {
+if (left < right) {
+const mid = Math.floor((left + right) / 2);
+// Sort first and second halves
+mergeSort(arr, left, mid);
+mergeSort(arr, mid + 1, right);
+// Merge the sorted halves
+merge(arr, left, mid, right);
+}
+}
+mergeSort(arr, 0, n - 1);
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+quick: function(arr) {
+const n = arr.length;
+let comparisons = 0;
+let swaps = 0;
+const steps = [];
+function partition(arr, low, high) {
+// Pivot (Element to be placed at right position)
+const pivot = arr[high];
+steps.push({type: 'select', index: high, value: pivot});
+let i = low - 1; // Index of smaller element
+for (let j = low; j <= high - 1; j++) {
+comparisons++;
+steps.push({type: 'compare', indices: [j, high]});
+// If current element is smaller than the pivot
+if (arr[j] < pivot) {
+i++; // Increment index of smaller element
+// Swap elements
+[arr[i], arr[j]] = [arr[j], arr[i]];
+swaps++;
+steps.push({type: 'swap', indices: [i, j], values: [arr[i], arr[j]]});
+}
+// Only send final update
+if (steps.length >= 10000) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: []
+});
+steps.length = 0;
+}
+}
+// Swap pivot element with element at i+1
+[arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+swaps++;
+steps.push({type: 'swap', indices: [i + 1, high], values: [arr[i + 1], arr[high]]});
+return i + 1;
+}
+function quickSort(arr, low, high) {
+if (low < high) {
+// pi is partitioning index
+const pi = partition(arr, low, high);
+// Separately sort elements before and after partition
+quickSort(arr, low, pi - 1);
+quickSort(arr, pi + 1, high);
+}
+}
+quickSort(arr, 0, n - 1);
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+heap: function(arr) {
+const n = arr.length;
+let comparisons = 0;
+let swaps = 0;
+const steps = [];
+// Build heap (rearrange array)
+for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+heapify(arr, n, i);
+}
+// One by one extract an element from heap
+for (let i = n - 1; i > 0; i--) {
+// Move current root to end
+[arr[0], arr[i]] = [arr[i], arr[0]];
+swaps++;
+steps.push({type: 'swap', indices: [0, i], values: [arr[0], arr[i]]});
+// Call max heapify on the reduced heap
+heapify(arr, i, 0);
+// Only send final update
+if (steps.length >= 10000) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: []
+});
+steps.length = 0;
+}
+}
+function heapify(arr, n, i) {
+let largest = i; // Initialize largest as root
+const left = 2 * i + 1;
+const right = 2 * i + 2;
+// If left child is larger than root
+if (left < n) {
+comparisons++;
+steps.push({type: 'compare', indices: [left, largest]});
+if (arr[left] > arr[largest]) {
+largest = left;
+}
+}
+// If right child is larger than largest so far
+if (right < n) {
+comparisons++;
+steps.push({type: 'compare', indices: [right, largest]});
+if (arr[right] > arr[largest]) {
+largest = right;
+}
+}
+// If largest is not root
+comparisons++;
+if (largest !== i) {
+[arr[i], arr[largest]] = [arr[largest], arr[i]];
+swaps++;
+steps.push({type: 'swap', indices: [i, largest], values: [arr[i], arr[largest]]});
+// Recursively heapify the affected sub-tree
+heapify(arr, n, largest);
+}
+}
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+shell: function(arr) {
+const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  
+  for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+    for (let i = gap; i < n; i++) {
+      const temp = arr[i];
+      steps.push({type: 'select', index: i, value: temp});
+      let j = i;
+      
+      // Erster Vergleich außerhalb der Schleife
+      if (j >= gap) {
+        comparisons++;
+        steps.push({type: 'compare', indices: [j - gap, j]});
+      }
+      
+      for (; j >= gap && arr[j - gap] > temp; j -= gap) {
+        arr[j] = arr[j - gap];
+        swaps++;
+        steps.push({type: 'move', fromIndex: j - gap, toIndex: j, value: arr[j]});
+        
+        // Nächster Vergleich, wenn wir eine weitere Iteration machen
+        if (j - gap >= gap) {
+          comparisons++;
+          steps.push({type: 'compare', indices: [j - gap - gap, j - gap]});
+        }
+        
+        // Only send final update
+        if (steps.length >= 10000) {
+          self.postMessage({
+            type: 'progress',
+            array: [...arr],
+            comparisons,
+            steps: []
+          });
+          steps.length = 0;
+        }
+      }
+      
+      if (j !== i) {
+        arr[j] = temp;
+        steps.push({type: 'insert', index: j, value: temp});
+      }
+    }
+  }
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+radix: function(arr) {
+const n = arr.length;
+let comparisons = 0;
+let swaps = 0;
+const steps = [];
+// Find the maximum number to know number of digits
+let max = Math.max(...arr);
+// Do counting sort for every digit
+for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+countingSort(arr, exp);
+// Only send final update
+if (steps.length >= 10000) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: []
+});
+steps.length = 0;
+}
+}
+function countingSort(arr, exp) {
+const output = new Array(n).fill(0);
+const count = new Array(10).fill(0);
+// Store count of occurrences in count[]
+for (let i = 0; i < n; i++) {
+const digit = Math.floor(arr[i] / exp) % 10;
+count[digit]++;
+steps.push({type: 'select', index: i, value: arr[i]});
+}
+// Change count[i] so that count[i] now contains
+// actual position of this digit in output[]
+for (let i = 1; i < 10; i++) {
+count[i] += count[i - 1];
+}
+// Build the output array
+for (let i = n - 1; i >= 0; i--) {
+const digit = Math.floor(arr[i] / exp) % 10;
+output[count[digit] - 1] = arr[i];
+count[digit]--;
+swaps++;
+steps.push({type: 'move', fromIndex: i, toIndex: count[digit], value: arr[i]});
+}
+// Copy the output array to arr[], so that arr[] now
+// contains sorted numbers according to current digit
+for (let i = 0; i < n; i++) {
+arr[i] = output[i];
+steps.push({type: 'insert', index: i, value: output[i]});
+}
+}
+// Send any remaining steps
+if (steps.length > 0) {
+self.postMessage({
+type: 'progress',
+array: [...arr],
+comparisons,
+steps: [...steps]
+});
+}
+return {
+array: arr,
+comparisons,
+swaps
+};
+},
+// Counting Sort
+counting: function(arr) {
+  const n = arr.length;
+  let swaps = 0;
+  let comparisons = 0;
+  const steps = [];
+  
+  // Finde den Maximalwert im Array
+  let max = arr[0];
+  for (let i = 1; i < n; i++) {
+    comparisons++;
+    steps.push({type: 'compare', indices: [0, i]});
+    if (arr[i] > max) {
+      max = arr[i];
+    }
+  }
+  
+  // Erstelle Zählarray und initialisiere mit 0
+  const count = new Array(max + 1).fill(0);
+  
+  // Zähle das Vorkommen jedes Elements
+  for (let i = 0; i < n; i++) {
+    count[arr[i]]++;
+    steps.push({type: 'select', index: i, value: arr[i]});
+  }
+  
+  // Kumuliere die Zähler
+  for (let i = 1; i <= max; i++) {
+    count[i] += count[i - 1];
+    steps.push({type: 'select', index: i, value: count[i]});
+  }
+  
+  // Erstelle temporäres Ausgabearray
+  const output = new Array(n);
+  
+  // Baue das sortierte Array
+  for (let i = n - 1; i >= 0; i--) {
+    output[count[arr[i]] - 1] = arr[i];
+    count[arr[i]]--;
+    swaps++;
+    steps.push({type: 'move', fromIndex: i, toIndex: count[arr[i]], value: arr[i]});
+    
+    // Fortschritt melden
+    if (steps.length >= 10000) {
+      self.postMessage({
+        type: 'progress',
+        array: [...arr],
+        comparisons,
+        steps: []
+      });
+      steps.length = 0;
+    }
+  }
+  
+  // Kopiere das sortierte Array zurück
+  for (let i = 0; i < n; i++) {
+    arr[i] = output[i];
+    steps.push({type: 'insert', index: i, value: output[i]});
+  }
+  
+  // Restliche Schritte senden
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: [...steps]
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons, // Weniger als bei vergleichsbasierten Algorithmen
+    swaps
+  };
+},
+
+// Bucket Sort
+bucket: function(arr) {
+  const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  
+  // Finde Min und Max
+  let min = arr[0], max = arr[0];
+  for (let i = 1; i < n; i++) {
+    comparisons += 2; // Zwei Vergleiche: für min und max
+    steps.push({type: 'compare', indices: [0, i]});
+    
+    if (arr[i] < min) min = arr[i];
+    if (arr[i] > max) max = arr[i];
+  }
+  
+  // Anzahl der Buckets, typischerweise sqrt(n)
+  const bucketCount = Math.ceil(Math.sqrt(n));
+  const bucketSize = (max - min) / bucketCount + 1;
+  
+  // Erstelle Buckets
+  const buckets = Array.from({ length: bucketCount }, () => []);
+  
+  // Elemente in Buckets verteilen
+  for (let i = 0; i < n; i++) {
+    const bucketIndex = Math.floor((arr[i] - min) / bucketSize);
+    buckets[bucketIndex].push(arr[i]);
+    steps.push({type: 'select', index: i, value: arr[i]});
+    swaps++;
+  }
+  
+  // Sortiere jeden Bucket (mit Insertion Sort) und füge sie zusammen
+  let index = 0;
+  for (let i = 0; i < bucketCount; i++) {
+    // Insertion Sort für diesen Bucket
+    for (let j = 1; j < buckets[i].length; j++) {
+      let key = buckets[i][j];
+      let k = j - 1;
+      
+      comparisons++;
+      while (k >= 0 && buckets[i][k] > key) {
+        buckets[i][k + 1] = buckets[i][k];
+        k--;
+        comparisons++;
+        swaps++;
+      }
+      
+      buckets[i][k + 1] = key;
+    }
+    
+    // Füge sortierten Bucket zum Ergebnis-Array hinzu
+    for (let j = 0; j < buckets[i].length; j++) {
+      arr[index] = buckets[i][j];
+      steps.push({type: 'insert', index: index, value: buckets[i][j]});
+      index++;
+    }
+    
+    // Fortschritt melden
+    if (steps.length >= 10000) {
+      self.postMessage({
+        type: 'progress',
+        array: [...arr],
+        comparisons,
+        steps: []
+      });
+      steps.length = 0;
+    }
+  }
+  
+  // Restliche Schritte senden
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: [...steps]
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons,
+    swaps
+  };
+},
+
+// Tim Sort
+tim: function(arr) {
+  const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  
+  // Tim Sort verwendet eine Minimalgröße für Runs
+  const RUN = 32;
+  
+  // Sortiere kleine Subarrays mit Insertion Sort
+  for (let i = 0; i < n; i += RUN) {
+    const end = Math.min(i + RUN - 1, n - 1);
+    insertionSortSubarray(arr, i, end);
+  }
+  
+  // Merge die sortierten Subarrays
+  for (let size = RUN; size < n; size = 2 * size) {
+    for (let left = 0; left < n; left += 2 * size) {
+      const mid = Math.min(left + size - 1, n - 1);
+      const right = Math.min(left + 2 * size - 1, n - 1);
+      
+      if (mid < right) {
+        merge(arr, left, mid, right);
+      }
+    }
+  }
+  
+  // Hilfsfunktion: Insertion Sort für einen Subarray
+  function insertionSortSubarray(arr, left, right) {
+    for (let i = left + 1; i <= right; i++) {
+      const key = arr[i];
+      let j = i - 1;
+      
+      comparisons++;
+      steps.push({type: 'select', index: i, value: key});
+      
+      while (j >= left && arr[j] > key) {
+        arr[j + 1] = arr[j];
+        steps.push({type: 'move', fromIndex: j, toIndex: j + 1, value: arr[j]});
+        j--;
+        comparisons++;
+        swaps++;
+      }
+      
+      if (j + 1 !== i) {
+        arr[j + 1] = key;
+        steps.push({type: 'insert', index: j + 1, value: key});
+      }
+    }
+  }
+  
+  // Hilfsfunktion: Merge für Tim Sort
+  function merge(arr, left, mid, right) {
+    const len1 = mid - left + 1;
+    const len2 = right - mid;
+    const leftArr = new Array(len1);
+    const rightArr = new Array(len2);
+    
+    // Kopiere Daten in temporäre Arrays
+    for (let i = 0; i < len1; i++) {
+      leftArr[i] = arr[left + i];
+    }
+    for (let i = 0; i < len2; i++) {
+      rightArr[i] = arr[mid + 1 + i];
+    }
+    
+    // Merge der temporären Arrays
+    let i = 0, j = 0, k = left;
+    while (i < len1 && j < len2) {
+      comparisons++;
+      steps.push({type: 'compare', indices: [left + i, mid + 1 + j]});
+      
+      if (leftArr[i] <= rightArr[j]) {
+        arr[k] = leftArr[i];
+        steps.push({type: 'insert', index: k, value: leftArr[i]});
+        i++;
+      } else {
+        arr[k] = rightArr[j];
+        steps.push({type: 'insert', index: k, value: rightArr[j]});
+        j++;
+      }
+      k++;
+      swaps++;
+    }
+    
+    // Kopiere restliche Elemente
+    while (i < len1) {
+      arr[k] = leftArr[i];
+      steps.push({type: 'insert', index: k, value: leftArr[i]});
+      i++;
+      k++;
+      swaps++;
+    }
+    while (j < len2) {
+      arr[k] = rightArr[j];
+      steps.push({type: 'insert', index: k, value: rightArr[j]});
+      j++;
+      k++;
+      swaps++;
+    }
+  }
+  
+  // Fortschritt melden
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: [...steps]
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons,
+    swaps
+  };
+},
+
+// Cocktail Sort (bidirektionaler Bubble Sort)
+cocktail: function(arr) {
+  const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  let swapped = true;
+  let start = 0;
+  let end = n - 1;
+  
+  while (swapped) {
+    // Reset swapped Flag bei jedem Durchlauf
+    swapped = false;
+    
+    // Vorwärts (wie Bubble Sort)
+    for (let i = start; i < end; i++) {
+      comparisons++;
+      steps.push({type: 'compare', indices: [i, i + 1]});
+      
+      if (arr[i] > arr[i + 1]) {
+        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+        steps.push({type: 'swap', indices: [i, i + 1], values: [arr[i], arr[i + 1]]});
+        swapped = true;
+        swaps++;
+      }
+    }
+    
+    // Wenn keine Swaps mehr, ist das Array sortiert
+    if (!swapped) break;
+    
+    // Verringere das Ende, da das letzte Element jetzt am richtigen Platz ist
+    end--;
+    
+    // Reset swapped für den Rückwärtslauf
+    swapped = false;
+    
+    // Rückwärts (vom Ende zum Anfang)
+    for (let i = end - 1; i >= start; i--) {
+      comparisons++;
+      steps.push({type: 'compare', indices: [i, i + 1]});
+      
+      if (arr[i] > arr[i + 1]) {
+        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+        steps.push({type: 'swap', indices: [i, i + 1], values: [arr[i], arr[i + 1]]});
+        swapped = true;
+        swaps++;
+      }
+    }
+    
+    // Erhöhe den Start, da das erste Element jetzt am richtigen Platz ist
+    start++;
+    
+    // Fortschritt melden
+    if (steps.length >= 10000) {
+      self.postMessage({
+        type: 'progress',
+        array: [...arr],
+        comparisons,
+        steps: []
+      });
+      steps.length = 0;
+    }
+  }
+  
+  // Restliche Schritte senden
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: [...steps]
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons,
+    swaps
+  };
+},
+
+// Comb Sort
+comb: function(arr) {
+  const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  
+  // Initialer Gap
+  let gap = n;
+  let shrink = 1.3; // Shrink-Faktor
+  let sorted = false;
+  
+  while (!sorted) {
+    // Gap aktualisieren
+    gap = Math.floor(gap / shrink);
+    if (gap <= 1) {
+      gap = 1;
+      sorted = true; // Wird auf false gesetzt, wenn ein Swap stattfindet
+    }
+    
+    for (let i = 0; i + gap < n; i++) {
+      comparisons++;
+      steps.push({type: 'compare', indices: [i, i + gap]});
+      
+      if (arr[i] > arr[i + gap]) {
+        [arr[i], arr[i + gap]] = [arr[i + gap], arr[i]];
+        steps.push({type: 'swap', indices: [i, i + gap], values: [arr[i], arr[i + gap]]});
+        swaps++;
+        sorted = false;
+      }
+      
+      // Fortschritt melden
+      if (steps.length >= 10000) {
+        self.postMessage({
+          type: 'progress',
+          array: [...arr],
+          comparisons,
+          steps: []
+        });
+        steps.length = 0;
+      }
+    }
+  }
+  
+  // Restliche Schritte senden
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: [...steps]
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons,
+    swaps
+  };
+},
+
+// Gnome Sort
+gnome: function(arr) {
+  const n = arr.length;
+  let comparisons = 0;
+  let swaps = 0;
+  const steps = [];
+  let pos = 0;
+  
+  while (pos < n) {
+    if (pos === 0) {
+      // Beim ersten Element gibt es keinen Vergleich
+      pos++;
+    } else {
+      // Zähle den Vergleich unabhängig vom Ergebnis
+      comparisons++;
+      steps.push({type: 'compare', indices: [pos, pos - 1]});
+      
+      if (arr[pos] >= arr[pos - 1]) {
+        // Elemente sind in Ordnung, gehe nach rechts
+        pos++;
+      } else {
+        // Elemente nicht in Ordnung, tausche und gehe nach links
+        [arr[pos], arr[pos - 1]] = [arr[pos - 1], arr[pos]];
+        steps.push({type: 'swap', indices: [pos, pos - 1], values: [arr[pos], arr[pos - 1]]});
+        swaps++;
+        pos--;
+      }
+    }
+    
+    // Fortschritt melden (Rest bleibt gleich)
+    if (steps.length >= 10000) {
+      self.postMessage({
+        type: 'progress',
+        array: [...arr],
+        comparisons,
+        steps: []
+      });
+      steps.length = 0;
+    }
+  }
+  
+  // Restliche Schritte senden
+  if (steps.length > 0) {
+    self.postMessage({
+      type: 'progress',
+      array: [...arr],
+      comparisons,
+      steps: [...steps]
+    });
+  }
+  
+  return {
+    array: arr,
+    comparisons,
+    swaps
+  };
+}
+};
+// Worker onmessage handler
+self.onmessage = function(e) {
+const { algorithm, array } = e.data;
+try {
+const startTime = performance.now();
+const result = algorithms[algorithm](array);
+const endTime = performance.now();
+self.postMessage({
+type: 'complete',
+algorithm,
+array: result.array,
+comparisons: result.comparisons,
+swaps: result.swaps,
+time: endTime - startTime
+});
+} catch (error) {
+self.postMessage({
+type: 'error',
+algorithm,
+message: error.message
+});
+}
+};
+`);
+const algorithmMemory = {
+	bubble: 0,               // O(1) zusätzlicher Speicher
+	selection: 0,            // O(1) zusätzlicher Speicher
+	insertion: 0,            // O(1) zusätzlicher Speicher
+	merge: array.length * 8, // O(n) zusätzlicher Speicher
+	quick: Math.log2(array.length) * 8, // O(log n) Stack-Speicher
+	heap: 0,                 // O(1) zusätzlicher Speicher
+	shell: 0,                // O(1) zusätzlicher Speicher
+	radix: (array.length + 10) * 8,  // O(n + k) zusätzlicher Speicher
+	counting: (Math.max(...array) + 1) * 8, // O(k) Speicher, k = Bereich der Werte
+	bucket: array.length * 8 + 10 * 8,      // O(n+k) Speicher
+	tim: array.length * 8 * 0.3,            // Ca. 0.3*n für Hilfsspeicher
+	cocktail: 0,                            // O(1) Speicher
+	comb: 0,                                // O(1) Speicher
+	gnome: 0                                // O(1) Speicher
+};
+  
+workers[algorithm] = worker;
+// Set up worker message handler
+worker.onmessage = function(e) {
+const data = e.data;
+if (data.type === 'progress') {
+updateComparisonCount(algorithm, data.comparisons);
+} else if (data.type === 'complete') {
+const executionTime = data.time;
+// Update status
+const statusElement = document.getElementById(`${algorithm}-status`);
+if (statusElement) {
+statusElement.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800';
+statusElement.textContent = 'Completed';
+}
+// Update results
+const timeElement = document.getElementById(`${algorithm}-time`);
+if (timeElement) {
+timeElement.textContent = `${executionTime.toFixed(2)} ms`;
+}
+// Add to results
+results[algorithm] = {
+  time: executionTime,
+  comparisons: data.comparisons,
+  swaps: data.swaps,
+  memory: Math.round(array.length * 8 + algorithmMemory[algorithm]) // Basis + Zusatzspeicher
+};
+// Update memory usage
+const memoryElement = document.getElementById(`${algorithm}-memory`);
+if (memoryElement) {
+memoryElement.textContent = `${results[algorithm].memory} bytes`;
+}
+// Update rankings
+updateRankings();
+// Check if all algorithms are complete
+checkAllComplete();
+// Show notification
+showToast(`${getAlgorithmName(algorithm)} completed in ${executionTime.toFixed(2)} ms`, 'success');
+// Terminate worker
+worker.terminate();
+workers[algorithm] = null;
+} else if (data.type === 'error') {
+// Handle error
+const statusElement = document.getElementById(`${algorithm}-status`);
+if (statusElement) {
+statusElement.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800';
+statusElement.textContent = 'Error';
+}
+showToast(`Error in ${getAlgorithmName(algorithm)}: ${data.message}`, 'error');
+// Terminate worker
+worker.terminate();
+workers[algorithm] = null;
+// Check if all algorithms are complete
+checkAllComplete();
+}
+};
+// Start the worker
+worker.postMessage({
+algorithm,
+array
+});
+}
+
+function updateRankings() {
+// Get all completed algorithms
+const completedAlgorithms = Object.keys(results);
+if (completedAlgorithms.length === 0) return;
+// Sort by execution time
+completedAlgorithms.sort((a, b) => results[a].time - results[b].time);
+// Update ranks in results object
+completedAlgorithms.forEach((algo, index) => {
+results[algo].rank = index + 1;
+});
+// Update table with new rankings
+const tbody = resultsTableBody;
+tbody.innerHTML = '';
+// First add completed algorithms in order of rank
+completedAlgorithms.forEach((algo, index) => {
+const rank = index + 1;
+const result = results[algo];
+const row = document.createElement('tr');
+row.id = `${algo}-result-row`;
+// Add appropriate background color based on rank, but only for top 3
+const bgClass = rank <= 3 ? (rank === 1 ? 'bg-yellow-50' : rank === 2 ? 'bg-gray-50' : 'bg-amber-50') : 'bg-white';
+row.classList.add(bgClass);
+row.innerHTML = `
+<td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+${getAlgorithmName(algo)}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+Completed
+</span>
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-time">
+${result.time.toFixed(2)} ms
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-comparisons">
+${result.comparisons.toLocaleString()}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-exchanges">
+${result.swaps.toLocaleString()}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-memory">
+${result.memory} bytes
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-rank">
+${rank}${getRankSuffix(rank)}
+</td>
+`;
+tbody.appendChild(row);
+});
+// Then add remaining (incomplete) algorithms
+const selectedAlgorithms = getSelectedAlgorithms();
+selectedAlgorithms.forEach(algo => {
+if (!completedAlgorithms.includes(algo)) {
+const row = document.createElement('tr');
+row.id = `${algo}-result-row`;
+row.innerHTML = `
+<td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+${getAlgorithmName(algo)}
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+Running
+</span>
+</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-time">-</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-comparisons">0</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-exchanges">0</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-memory">-</td>
+<td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500" id="${algo}-rank">-</td>
+`;
+tbody.appendChild(row);
+}
+});
+}
+function getRankSuffix(rank) {
+if (rank === 1) return 'st';
+if (rank === 2) return 'nd';
+if (rank === 3) return 'rd';
+return 'th';
+}
+function checkAllComplete() {
+  const selectedAlgorithms = getSelectedAlgorithms();
+  const completedCount = Object.keys(results).length;
+  const stoppedCount = Object.values(workers).filter(worker => worker === null).length;
+  
+  // Alle Algorithmen sind entweder abgeschlossen oder gestoppt
+  if (completedCount === selectedAlgorithms.length || stoppedCount === selectedAlgorithms.length) {
+    // Reset workers
+    workers = {};
+    
+    // Enable all controls
+    enableControls();
+    
+    // Zeige eine Benachrichtigung
+    const totalTime = Date.now() - sortingStartTime;
+    showToast(`All sorting algorithms completed in ${(totalTime / 1000).toFixed(2)} seconds`, 'success');
+  }
+}
+function showToast(message, type = 'info') {
+const toast = document.createElement('div');
+let bgColor, textColor, icon;
+switch (type) {
+case 'success':
+bgColor = 'bg-green-50';
+textColor = 'text-green-800';
+icon = 'ri-check-line';
+break;
+case 'error':
+bgColor = 'bg-red-50';
+textColor = 'text-red-800';
+icon = 'ri-error-warning-line';
+break;
+case 'warning':
+bgColor = 'bg-yellow-50';
+textColor = 'text-yellow-800';
+icon = 'ri-alert-line';
+break;
+default:
+bgColor = 'bg-blue-50';
+textColor = 'text-blue-800';
+icon = 'ri-information-line';
+}
+toast.className = `toast ${bgColor} border-l-4 border-${textColor.replace('text-', '')} p-4 rounded shadow-md flex items-start max-w-md`;
+toast.innerHTML = `
+<div class="flex-shrink-0 w-5 h-5 flex items-center justify-center ${textColor} mr-3">
+<i class="${icon}"></i>
+</div>
+<div class="${textColor}">${message}</div>
+`;
+toastContainer.appendChild(toast);
+// Remove toast after animation completes
+setTimeout(() => {
+if (toastContainer.contains(toast)) {
+toastContainer.removeChild(toast);
+}
+}, 3000);
+}
+function getAlgorithmName(algorithm) {
+const names = {
+bubble: 'Bubble Sort',
+selection: 'Selection Sort',
+insertion: 'Insertion Sort',
+merge: 'Merge Sort',
+quick: 'Quick Sort',
+heap: 'Heap Sort',
+shell: 'Shell Sort',
+radix: 'Radix Sort',
+counting: 'Counting Sort',
+bucket: 'Bucket Sort',
+tim: 'Tim Sort',
+cocktail: 'Cocktail Sort',
+comb: 'Comb Sort',
+gnome: 'Gnome Sort'
+};
+return names[algorithm] || algorithm;
+}
+
+function createWorker(codeString) {
+  const blob = new Blob([codeString], { type: 'application/javascript' });
+  const url = URL.createObjectURL(blob);
+  const worker = new Worker(url);
+  
+  // Speicherleck vermeiden
+  URL.revokeObjectURL(url);
+  
+  return worker;
+}
+});
+
+// Visualization Options-Steuerung
+(function() {
+  // IDs der Checkboxen und zugehörige Spaltenindizes
+  const columnToggles = {
+    'toggle-time': 2,        // Execution Time ist die 3. Spalte (Index 2)
+    'toggle-comparisons': 3, // Comparisons ist die 4. Spalte (Index 3)
+    'toggle-exchanges': 4,   // Exchanges ist die 5. Spalte (Index 4)
+    'toggle-memory': 5       // Memory Usage ist die 6. Spalte (Index 5)
+  };
+
+  // Initial Setup - erst ausführen, wenn DOM geladen ist
+  function setupColumnToggles() {
+    // Event-Listener für alle Checkboxen einrichten
+    Object.keys(columnToggles).forEach(toggleId => {
+      const checkbox = document.getElementById(toggleId);
+      if (checkbox) {
+        // Initialen Zustand aus localStorage laden, falls verfügbar
+        const savedState = localStorage.getItem(toggleId);
+        if (savedState !== null) {
+          checkbox.checked = savedState === 'true';
+          toggleColumnVisibility(columnToggles[toggleId], checkbox.checked);
+        }
+        
+        // Event-Listener hinzufügen
+        checkbox.addEventListener('change', function() {
+          toggleColumnVisibility(columnToggles[toggleId], this.checked);
+          // Zustand in localStorage speichern
+          localStorage.setItem(toggleId, this.checked);
+        });
+      }
+    });
+  }
+
+  // Funktion zum Ein-/Ausblenden einer Spalte
+  function toggleColumnVisibility(columnIndex, isVisible) {
+    // Spaltenüberschrift umschalten
+    const headerCells = document.querySelectorAll('table thead th');
+    if (headerCells.length > columnIndex) {
+      headerCells[columnIndex].style.display = isVisible ? '' : 'none';
+    }
+
+    // Alle Zellen in dieser Spalte umschalten
+    const rows = document.querySelectorAll('table tbody tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > columnIndex) {
+        cells[columnIndex].style.display = isVisible ? '' : 'none';
+      }
+    });
+
+    // Anpassung der Spaltenbreiten - kann bei Bedarf aktiviert werden
+    /*
+    const visibleColumnCount = getVisibleColumnCount();
+    const width = `${Math.floor(100 / visibleColumnCount)}%`;
+    
+    document.querySelectorAll('table th:not([style*="display: none"]), table td:not([style*="display: none"])').forEach(cell => {
+      cell.style.width = width;
+    });
+    */
+  }
+
+  // Hilfsfunktion: Zählt die Anzahl der sichtbaren Spalten
+  function getVisibleColumnCount() {
+    const headerCells = document.querySelectorAll('table thead th');
+    let visibleCount = 0;
+    
+    headerCells.forEach(cell => {
+      if (cell.style.display !== 'none') {
+        visibleCount++;
+      }
+    });
+    
+    return visibleCount || 1; // Mindestens 1, um Division durch 0 zu vermeiden
+  }
+  
+  // Automatisch Setup ausführen, wenn DOM geladen ist
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupColumnToggles);
+  } else {
+    setupColumnToggles();
+  }
+})();
+
+// Automatische Anpassung für mobile Geräte
+(function() {
+  // Initialisiere mobile Anpassung
+  function initMobileOptimization() {
+    const checkMobile = () => {
+      if (window.innerWidth < 768) { // Für Geräte mit weniger als 768px Breite
+        // Automatisch bestimmte Spalten ausblenden für mobile Ansicht
+        const hiddenColumns = ['toggle-comparisons', 'toggle-memory', 'toggle-exchanges'];
+        hiddenColumns.forEach(id => {
+          const checkbox = document.getElementById(id);
+          if (checkbox && checkbox.checked) {
+            checkbox.click(); // Trigger das Change-Event
+          }
+        });
+      }
+    };
+    
+    // Beim ersten Laden prüfen
+    checkMobile();
+    
+    // Bei Größenänderung prüfen (mit Debounce für Performance)
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(checkMobile, 250);
+    });
+  }
+  
+  // Ausführen nach DOM-Laden
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileOptimization);
+  } else {
+    initMobileOptimization();
+  }
+})();
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal elements
+    const modalContainer = document.getElementById('modal-container');
+    const modalTitle = document.getElementById('modal-title');
+    const modalContent = document.getElementById('modal-content');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    
+    // Button elements
+    const showDocsBtn = document.getElementById('show-docs-btn');
+    const showTermsBtn = document.getElementById('show-terms-btn');
+    const showPrivacyBtn = document.getElementById('show-privacy-btn');
+    
+    // Open modal with appropriate content
+    function openModal(title, contentHTML) {
+      modalTitle.textContent = title;
+      modalContent.innerHTML = contentHTML;
+      modalContainer.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+    
+    // Close modal
+    function closeModal() {
+      modalContainer.classList.add('hidden');
+      document.body.style.overflow = ''; // Allow scrolling again
+    }
+    
+    // Event listeners for buttons
+    if (showDocsBtn) {
+      showDocsBtn.addEventListener('click', function() {
+        openModal('Documentation', documentationContent);
+      });
+    }
+    
+    if (showTermsBtn) {
+      showTermsBtn.addEventListener('click', function() {
+        openModal('Terms of Use', termsContent);
+      });
+    }
+    
+    if (showPrivacyBtn) {
+      showPrivacyBtn.addEventListener('click', function() {
+        openModal('Privacy Policy', privacyContent);
+      });
+    }
+    
+    // Close modal
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', closeModal);
+    }
+    
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', closeModal);
+    }
+    
+    // Close modal on click outside
+    modalContainer.addEventListener('click', function(event) {
+      if (event.target === modalContainer) {
+        closeModal();
+      }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && !modalContainer.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+    
+    // === Modal Contents ===
+    
+    // Documentation content - converted from markdown
+    const documentationContent = `
+  <div class="prose prose-sm max-w-none">
+    <h1>Sorting Algorithm Comparison Tool - Documentation</h1>
+    
+    <h2 id="introduction">Introduction</h2>
+    <p>Sort Battle is an interactive web application that allows users to compare various sorting algorithms and analyze their performance using multiple metrics. This tool is especially useful for educational purposes, helping to understand the differences between various sorting algorithms and their behavior with different input data.</p>
+    
+    <h3>Key Features</h3>
+    <ul>
+      <li>Comparison of 14 different sorting algorithms</li>
+      <li>Adjustable array size (1 to 50,000 elements)</li>
+      <li>Various input types (random, sorted, nearly sorted, etc.)</li>
+      <li>Detailed performance metrics (execution time, comparisons, exchanges, memory usage)</li>
+      <li>Real-time ranking of algorithms</li>
+      <li>Customizable results display with persistent user settings</li>
+      <li>Automatic optimization for mobile devices</li>
+    </ul>
+    
+    <h2 id="features-and-usage">Features and Usage</h2>
+    
+    <h3>Array Configuration</h3>
+    <ol>
+      <li><strong>Array Size</strong>: Use the slider or input field to set the size of the array to be sorted (1 to 50,000 elements).</li>
+      <li><strong>Array Type</strong>: Various types are available:
+        <ul>
+          <li><strong>Random</strong>: Random values between 1 and 100</li>
+          <li><strong>Sorted (Ascending)</strong>: Already sorted values</li>
+          <li><strong>Sorted (Descending)</strong>: Reverse sorted values</li>
+          <li><strong>Nearly Sorted</strong>: Mostly sorted array with approximately 10% swapped elements</li>
+          <li><strong>Uniform</strong>: Mostly equal values with some outliers</li>
+          <li><strong>Custom Input</strong>: Manual entry of values or import from a file</li>
+        </ul>
+      </li>
+      <li><strong>Generate Array</strong>: After setting the parameters, use this button to create and display the array.</li>
+    </ol>
+    
+    <h3>Algorithm Selection</h3>
+    <p>You can select any of the implemented algorithms:</p>
+    <ul>
+      <li>Bubble Sort</li>
+      <li>Selection Sort</li>
+      <li>Insertion Sort</li>
+      <li>Merge Sort</li>
+      <li>Quick Sort</li>
+      <li>Heap Sort</li>
+      <li>Shell Sort</li>
+      <li>Radix Sort</li>
+      <li>Counting Sort</li>
+      <li>Bucket Sort</li>
+      <li>Tim Sort</li>
+      <li>Cocktail Sort</li>
+      <li>Comb Sort</li>
+      <li>Gnome Sort</li>
+    </ul>
+    
+    <h3>Controls</h3>
+    <ul>
+      <li><strong>Start Sorting</strong>: Begins the sorting process with the selected algorithms</li>
+      <li><strong>Stop</strong>: Aborts the ongoing sorting process</li>
+    </ul>
+    
+    <h3>Display Options</h3>
+    <p>The tool offers flexible display options for the results table, which are particularly useful on mobile devices or for specific analysis needs:</p>
+    
+    <h4>Column Control</h4>
+    <p>With the toggles under "Performance Metrics", you can control the display of individual metrics:</p>
+    <ul>
+      <li><strong>Show Execution Time</strong>: Toggles the display of execution time</li>
+      <li><strong>Show Comparison Count</strong>: Toggles the display of comparison counts</li>
+      <li><strong>Show Exchanges Count</strong>: Toggles the display of exchange counts</li>
+      <li><strong>Show Memory Usage</strong>: Toggles the display of memory usage</li>
+    </ul>
+    
+    <h4>User Customizations</h4>
+    <ul>
+      <li><strong>Persistent Settings</strong>: Your display preferences are stored in your browser's local storage and persist between sessions</li>
+      <li><strong>Automatic Mobile Adaptation</strong>: On screens less than 768px wide, certain columns are automatically hidden to improve table display</li>
+    </ul>
+    
+    <h2 id="implemented-sorting-algorithms">Implemented Sorting Algorithms</h2>
+    
+    <h3>Comparison-Based Algorithms</h3>
+    
+    <h4>1. Bubble Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Adjacent elements are compared and swapped if necessary</li>
+      <li><strong>Time Complexity</strong>: O(n²) average and worst case, O(n) best case</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Small arrays or nearly sorted data</li>
+    </ul>
+    
+    <h4>2. Selection Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Finds the smallest element and exchanges it with the first position, then finds the second smallest and exchanges it with the second position, etc.</li>
+      <li><strong>Time Complexity</strong>: O(n²) in all cases</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Small arrays or when exchanges are expensive</li>
+    </ul>
+    
+    <h4>3. Insertion Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Builds the sorted sequence one item at a time</li>
+      <li><strong>Time Complexity</strong>: O(n²) average and worst case, O(n) best case</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Small arrays or partially sorted data</li>
+    </ul>
+    
+    <h4>4. Merge Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Divide-and-conquer approach that recursively splits the array and then merges</li>
+      <li><strong>Time Complexity</strong>: O(n log n) in all cases</li>
+      <li><strong>Space Complexity</strong>: O(n)</li>
+      <li><strong>Suitability</strong>: Large datasets where stability is important</li>
+    </ul>
+    
+    <h4>5. Quick Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Selects a pivot element and partitions the array around it</li>
+      <li><strong>Time Complexity</strong>: O(n log n) average, O(n²) worst case</li>
+      <li><strong>Space Complexity</strong>: O(log n) for recursion stack</li>
+      <li><strong>Suitability</strong>: General-purpose sorting for large datasets</li>
+    </ul>
+    
+    <h4>6. Heap Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Builds a binary heap and repeatedly extracts the largest element</li>
+      <li><strong>Time Complexity</strong>: O(n log n) in all cases</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: When memory efficiency and guaranteed runtime are important</li>
+    </ul>
+    
+    <h4>7. Shell Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Extension of insertion sort with larger gaps between compared elements</li>
+      <li><strong>Time Complexity</strong>: Depends on gap sequence, between O(n log² n) and O(n²)</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Medium-sized datasets, hybrid scenarios</li>
+    </ul>
+    
+    <h4>8. Tim Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Hybrid algorithm derived from merge sort and insertion sort</li>
+      <li><strong>Time Complexity</strong>: O(n log n) worst case</li>
+      <li><strong>Space Complexity</strong>: O(n)</li>
+      <li><strong>Suitability</strong>: Standard sorting algorithm in many programming languages (Python, Java)</li>
+    </ul>
+    
+    <h4>9. Cocktail Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Bidirectional variation of bubble sort</li>
+      <li><strong>Time Complexity</strong>: O(n²) average and worst case, O(n) best case</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Small arrays with specific patterns</li>
+    </ul>
+    
+    <h4>10. Comb Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Improvement on bubble sort by comparing elements with larger gaps</li>
+      <li><strong>Time Complexity</strong>: O(n²) worst case, often better in practice</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Alternative to bubble sort for larger arrays</li>
+    </ul>
+    
+    <h4>11. Gnome Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Simple algorithm with local swaps</li>
+      <li><strong>Time Complexity</strong>: O(n²) worst case</li>
+      <li><strong>Space Complexity</strong>: O(1)</li>
+      <li><strong>Suitability</strong>: Small arrays, teaching example</li>
+    </ul>
+    
+    <h3>Non-Comparison-Based Algorithms</h3>
+    
+    <h4>12. Radix Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Sorts numbers digit by digit, from least significant to most significant</li>
+      <li><strong>Time Complexity</strong>: O(nk), where k is the number of digits</li>
+      <li><strong>Space Complexity</strong>: O(n + k)</li>
+      <li><strong>Suitability</strong>: Large datasets with limited range</li>
+    </ul>
+    
+    <h4>13. Counting Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Counts occurrences of each element and reconstructs the sorted array</li>
+      <li><strong>Time Complexity</strong>: O(n + k), where k is the range of values</li>
+      <li><strong>Space Complexity</strong>: O(k)</li>
+      <li><strong>Suitability</strong>: Data with limited range (e.g., grades, ages)</li>
+    </ul>
+    
+    <h4>14. Bucket Sort</h4>
+    <ul>
+      <li><strong>Principle</strong>: Distributes elements into buckets and sorts these separately</li>
+      <li><strong>Time Complexity</strong>: O(n) average, O(n²) worst case</li>
+      <li><strong>Space Complexity</strong>: O(n)</li>
+      <li><strong>Suitability</strong>: Uniformly distributed data in a known range</li>
+    </ul>
+    
+    <h2 id="performance-metrics">Performance Metrics</h2>
+    
+    <p>The tool measures and compares the following metrics:</p>
+    
+    <h3>1. Execution Time</h3>
+    <ul>
+      <li>Measured in milliseconds</li>
+      <li>Covers the actual computation time of the algorithm</li>
+      <li>Influenced by factors such as processor speed and system load</li>
+    </ul>
+    
+    <h3>2. Number of Comparisons</h3>
+    <ul>
+      <li>The frequency with which two elements in the array are compared</li>
+      <li>Critical factor for the performance of comparison-based algorithms</li>
+      <li>Reflects the theoretical time complexity</li>
+    </ul>
+    
+    <h3>3. Number of Exchanges</h3>
+    <ul>
+      <li>The frequency with which elements in the array exchange positions</li>
+      <li>Important indicator of efficiency, especially when write operations are expensive</li>
+      <li>Varies greatly between algorithms (e.g., Selection Sort vs. Bubble Sort)</li>
+    </ul>
+    
+    <h3>4. Memory Usage</h3>
+    <ul>
+      <li>Measured in bytes</li>
+      <li>Covers the additional memory required by the algorithm</li>
+      <li>Important for memory efficiency and in-place algorithms</li>
+    </ul>
+    
+    <h3>5. Rank</h3>
+    <ul>
+      <li>Based on execution time</li>
+      <li>Shows the relative performance between the selected algorithms</li>
+      <li>Helpful for quickly identifying the most efficient algorithm for a particular dataset</li>
+    </ul>
+    
+    <h2 id="technical-implementation">Technical Implementation</h2>
+    
+    <h3>Web Workers</h3>
+    <p>The tool uses Web Workers to execute sorting algorithms in separate threads:</p>
+    <ul>
+      <li>Prevents blocking of the user interface</li>
+      <li>Enables true parallel processing of multiple algorithms</li>
+      <li>Each algorithm gets its own worker</li>
+    </ul>
+    
+    <h3>Progress Tracking</h3>
+    <p>Sorting algorithms report their progress regularly:</p>
+    <ul>
+      <li>Intermediate results are displayed in real-time</li>
+      <li>Comparison counters are updated during execution</li>
+      <li>Temporary progress reports are sent when reaching 10,000 steps</li>
+    </ul>
+    
+    <h3>Abort Mechanism</h3>
+    <p>Sorting can be stopped at any time:</p>
+    <ul>
+      <li>All workers are terminated</li>
+      <li>Status is set to "Stopped"</li>
+      <li>Resources are released</li>
+    </ul>
+    
+    <h2 id="influence-hardware">Influence of Hardware on Sorting Algorithm Rankings</h2>
+
+    <p>The program uses a separate Web Worker for each selected sorting algorithm, allowing calculations to run concurrently in the browser. This architecture ensures the user interface remains responsive during sorting and that individual algorithms work independently.</p>
+    
+    <p>However, it's important to note that the underlying hardware, particularly the number and performance of available CPU cores, as well as how the browser schedules tasks, can have some influence on the measured execution times and thus the ranking of algorithms.</p>
+    
+    <h3>Specific Points:</h3>
+    
+    <h4>Start Time Differences</h4>
+    <p>Each worker is started immediately after selection, but in rapid succession. Small differences in start time may occur, which are largely compensated for by internal time measurement (performance.now() in the worker itself).</p>
+    
+    <h4>CPU Scheduling</h4>
+    <p>With a small number of workers (e.g., 3-5), the distribution of CPU time on modern processors (4, 6, 8 cores) is generally unproblematic.</p>
+    <p>However, if many workers (e.g., 10 or more) are started simultaneously, small displacement effects may occur on weaker devices or under high system load:</p>
+    <ul>
+      <li>Earlier started workers might be slightly favored</li>
+      <li>Later started workers might experience waiting times before receiving CPU time</li>
+      <li>Browser-internal prioritization (e.g., protection of the main thread) can also cause slight inequalities</li>
+    </ul>
+    
+    <h4>Modern Hardware</h4>
+    <p>Even on current laptops and desktop PCs, with about 10-14 simultaneously active workers, slight distortions are theoretically possible, especially if the number of available CPU cores is smaller than the number of workers.</p>
+    <p>However, in practice, these effects are in the order of a few milliseconds and typically do not significantly affect the relative ranking of algorithms with realistic input sizes.</p>
+    
+    <h4>Conclusion</h4>
+    <p>For most applications and modern hardware, the differences are negligible.</p>
+    
+    <h2 id="limitations">Limitations and Constraints</h2>
+    
+    <h3>Array Size</h3>
+    <ul>
+      <li><strong>Maximum Size</strong>: 50,000 elements</li>
+      <li>With larger arrays, the following problems may occur:
+        <ul>
+          <li>Browser memory limitations</li>
+          <li>Excessive CPU usage</li>
+          <li>Very long execution times for O(n²) algorithms</li>
+        </ul>
+      </li>
+    </ul>
+    
+    <h3>Browser Support</h3>
+    <ul>
+      <li>The tool is based on modern Web APIs such as Web Workers</li>
+      <li>Works best in current versions of Chrome, Firefox, Safari, and Edge</li>
+      <li>Older browsers may have limited functionality or performance issues</li>
+    </ul>
+    
+    <h3>Timing Accuracy</h3>
+    <ul>
+      <li>JavaScript time measurement has limited accuracy</li>
+      <li>Very fast sorts (<1ms) may yield inaccurate results</li>
+      <li>System load can affect time measurement</li>
+    </ul>
+    
+    <h3>Algorithm Limitations</h3>
+    <ul>
+      <li><strong>Radix Sort, Counting Sort, Bucket Sort</strong>: Only suitable for positive integers</li>
+      <li><strong>Counting Sort</strong>: Inefficient with large value ranges</li>
+      <li><strong>Quick Sort</strong>: Can degenerate to O(n²) with already sorted arrays</li>
+      <li><strong>Recursion Limit</strong>: Very large arrays can lead to stack overflows in recursive algorithms (Merge Sort, Quick Sort)</li>
+    </ul>
+    
+    <h2 id="tips-for-interpreting-results">Tips for Interpreting Results</h2>
+    
+    <h3>Algorithm Selection Based on Data Properties</h3>
+    <ul>
+      <li><strong>Nearly Sorted Data</strong>: Insertion Sort, Tim Sort</li>
+      <li><strong>Random Data</strong>: Quick Sort, Merge Sort, Heap Sort</li>
+      <li><strong>Reverse Sorted Data</strong>: Merge Sort, Heap Sort</li>
+      <li><strong>Evenly Distributed Data in Known Range</strong>: Bucket Sort, Radix Sort</li>
+      <li><strong>Data with Small Value Range</strong>: Counting Sort</li>
+    </ul>
+    
+    <h3>Understanding Metrics</h3>
+    <ul>
+      <li><strong>High Comparison Count, Low Exchange Count</strong>: Typical for Selection Sort</li>
+      <li><strong>Low Comparison Count or No Comparisons</strong>: Characteristic of non-comparison-based algorithms (Counting Sort, Radix Sort)</li>
+      <li><strong>Constant Additional Memory Usage (0 bytes)</strong>: Indicative of in-place algorithms</li>
+    </ul>
+    
+    <h3>Practical Considerations</h3>
+    <ul>
+      <li>For very small arrays (<10 elements), simple algorithms like Insertion Sort are often fastest</li>
+      <li>Memory usage can be more important than execution time in certain environments</li>
+      <li>Stability (maintaining the relative order of equal elements) is crucial in some applications</li>
+    </ul>
+    
+    <h2 id="troubleshooting">Common Errors and Troubleshooting</h2>
+    
+    <h3>Array Generation Problems</h3>
+    <ul>
+      <li><strong>Custom arrays too large</strong>: Limit input to max 50,000 elements</li>
+      <li><strong>Invalid custom inputs</strong>: Ensure only numbers are entered</li>
+      <li><strong>Slow array generation</strong>: For very large arrays, generation may take several seconds</li>
+    </ul>
+    
+    <h3>Sorting Problems</h3>
+    <ul>
+      <li><strong>Browser becomes slow or unresponsive</strong>: Abort sorting and reduce array size</li>
+      <li><strong>An algorithm hangs</strong>: Certain algorithms may take very long with specific inputs (e.g., Quick Sort with sorted arrays)</li>
+      <li><strong>Unexpected errors</strong>: Check error messages in toast notifications or browser console</li>
+    </ul>
+    
+    <h3>Inconsistent Results</h3>
+    <ul>
+      <li><strong>Different times in repeated runs</strong>: Normal due to browser/system activity</li>
+      <li><strong>Unexpectedly high comparison numbers</strong>: Check optimizations like early termination</li>
+      <li><strong>Algorithms don't complete</strong>: This can happen with very large arrays and quadratic algorithms</li>
+    </ul>
+  </div>
+`;
+    
+    // Privacy Policy
+    const privacyContent = `
+  <div class="prose prose-sm max-w-none">
+    <h1>Privacy Policy</h1>
+    
+    <p>At Sort Battle, we prioritize your privacy and are committed to transparency about our data practices.</p>
+    
+    <h2>1. No Data Collection</h2>
+    
+    <p>Sort Battle does not collect, store, or process any personal data whatsoever. Specifically:</p>
+    <ul>
+      <li>We do not use cookies or similar tracking technologies</li>
+      <li>We do not collect personal identifiers like IP addresses</li>
+      <li>We do not store user preferences or settings on our servers</li>
+      <li>We do not implement any analytics or tracking scripts</li>
+      <li>We do not gather usage statistics or performance metrics</li>
+    </ul>
+    
+    <h2>2. Local Storage</h2>
+    
+    <p>The application uses your browser's local storage only to save your display preferences (such as which columns are visible in the results table). This data never leaves your device and is stored entirely within your browser.</p>
+    
+    <h2>3. Browser Processing</h2>
+    
+    <p>All calculations and visualizations take place exclusively in your browser. Any arrays or data you create or input are processed locally and are not transmitted to any server.</p>
+    
+    <h2>4. Third-Party Services</h2>
+    
+    <p>Sort Battle does not integrate with any third-party services that would collect user data. We use Firebase Hosting solely as a static website hosting service.</p>
+    
+    <h2>5. Changes to this Privacy Policy</h2>
+    
+    <p>We reserve the right to update this privacy policy as needed. Any changes will be posted on this page.</p>
+    
+    <h2>6. Contact</h2>
+    
+    <p>If you have questions about our privacy practices, please contact: tekarldev@gmail.com</p>
+    
+    <p>Last updated: April 27, 2025</p>
+  </div>
+`;
+
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal elements
+    const modalContainer = document.getElementById('modal-container');
+    const modalTitle = document.getElementById('modal-title');
+    const modalContent = document.getElementById('modal-content');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    
+    // Button elements
+    const showDocsBtn = document.getElementById('show-docs-btn');
+    const showTermsBtn = document.getElementById('show-terms-btn');
+    const showPrivacyBtn = document.getElementById('show-privacy-btn');
+    
+    // Open modal with appropriate content
+    function openModal(title, contentHTML) {
+      modalTitle.textContent = title;
+      modalContent.innerHTML = contentHTML;
+      modalContainer.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+    
+    // Close modal
+    function closeModal() {
+      modalContainer.classList.add('hidden');
+      document.body.style.overflow = ''; // Allow scrolling again
+    }
+    
+    // Event listeners for buttons
+    if (showDocsBtn) {
+      showDocsBtn.addEventListener('click', function() {
+        openModal('Documentation', documentationContent);
+      });
+    }
+    
+    if (showTermsBtn) {
+      showTermsBtn.addEventListener('click', function() {
+        openModal('Terms of Use', termsContent);
+      });
+    }
+    
+    if (showPrivacyBtn) {
+      showPrivacyBtn.addEventListener('click', function() {
+        openModal('Privacy Policy', privacyContent);
+      });
+    }
+    
+    // Close modal
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', closeModal);
+    }
+    
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', closeModal);
+    }
+    
+    // Close modal on click outside
+    modalContainer.addEventListener('click', function(event) {
+      if (event.target === modalContainer) {
+        closeModal();
+      }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && !modalContainer.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+    
+    // === Modal Contents ===
+    
+    // Terms of Use
+    const termsContent = `
+      <div class="prose prose-sm max-w-none">
+        <h1>Terms of Use</h1>
+        
+        <p>Welcome to Sort Battle! These Terms of Use govern your access to and use of our website. By using this website, you agree to these terms.</p>
+        
+        <h2>1. Website Usage</h2>
+        
+        <p>You may use this website for educational and research purposes. Sort Battle is designed to compare various sorting algorithms and their performance. The website may not be used for illegal purposes or to violate the rights of third parties.</p>
+        
+        <h2>2. Intellectual Property</h2>
+        
+        <p>This website and its content (including but not limited to text, graphics, logos, images, audio clips, digital downloads, data compilations, and software) are the intellectual property of the operator and are protected by copyright and other intellectual property laws.</p>
+        
+        <h2>3. Licenses and Educational Use</h2>
+        
+        <p>This website is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. This means:</p>
+        <ul>
+          <li>You may share and adapt the material</li>
+          <li>You must give appropriate credit and provide a link to the license</li>
+          <li>You may not use the material for commercial purposes</li>
+          <li>If you remix or build upon the material, you must distribute your contributions under the same license as the original</li>
+        </ul>
+        
+        <h2>4. Disclaimer</h2>
+        
+        <p>This website is provided "as is" and "as available" without any warranties. The operator makes no warranty regarding the accuracy, completeness, or reliability of the content or the results of the tool.</p>
+        
+        <h2>5. Limitation of Liability</h2>
+        
+        <p>The operator is not liable for indirect, incidental, special, or consequential damages arising from the use of the website. This applies even if the operator has been advised of the possibility of such damages.</p>
+        
+        <h2>6. Changes to Terms of Use</h2>
+        
+        <p>The operator reserves the right to change these Terms of Use at any time. Such changes will be posted on this page.</p>
+        
+        <h2>7. Contact</h2>
+        
+        <p>If you have any questions about these Terms of Use, please contact: tekarldev@gmail.com</p>
+        
+        <p>Last updated: April 27, 2025</p>
+      </div>
+    `;
+    
+  });
+</script>
+</body>
+</html>
