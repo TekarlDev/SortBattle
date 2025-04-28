@@ -1,3 +1,4 @@
+/* robots.txt */
 User-agent: *
 Allow: /
-Sitemap: sortbattle.web.app/sitemap.xml
+Sitemap: https://sortbattle.web.app/sitemap.xml
