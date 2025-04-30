@@ -2991,6 +2991,7 @@ function createWorker(codeString) {
     </ul>
     
     <h3>Non-Comparison-Based Algorithms</h3>
+    <p><strong>Important Note:</strong> These algorithms do not rely on key comparisons for their core sorting mechanism, which is why they show zero or very few comparisons in the metrics. Any comparisons counted are only those that directly compare array elements for sorting purposes, not auxiliary operations.</p>
     
     <h4>12. Radix Sort</h4>
     <ul>
@@ -3027,11 +3028,13 @@ function createWorker(codeString) {
       <li>Influenced by factors such as processor speed and system load</li>
     </ul>
     
-    <h3>2. Number of Comparisons</h3>
+    <h3>2. Number of Key Comparisons</h3>
     <ul>
-      <li>The frequency with which two elements in the array are compared</li>
+      <li>Counts only actual key comparisons between elements for sorting purposes</li>
       <li>Critical factor for the performance of comparison-based algorithms</li>
-      <li>Reflects the theoretical time complexity</li>
+      <li>Does not include auxiliary comparisons (e.g., finding max values during initialization)</li>
+      <li>Non-comparison based algorithms like Counting Sort, Radix Sort may show zero or very few comparisons</li>
+      <li>Reflects the theoretical time complexity of comparison-based algorithms</li>
     </ul>
     
     <h3>3. Number of Exchanges</h3>
@@ -3159,6 +3162,12 @@ function createWorker(codeString) {
     <ul>
       <li><strong>High Comparison Count, Low Exchange Count</strong>: Typical for Selection Sort</li>
       <li><strong>Low Comparison Count or No Comparisons</strong>: Characteristic of non-comparison-based algorithms (Counting Sort, Radix Sort)</li>
+      <li><strong>Constant Additional Memory Usage (0 bytes)</strong>: Indicative of in-place algorithms</li>
+    </ul>
+    <ul>
+      <li><strong>High Comparison Count, Low Exchange Count</strong>: Typical for Selection Sort</li>
+      <li><strong>Low Comparison Count or No Comparisons</strong>: Characteristic of non-comparison-based algorithms (Counting Sort, Radix Sort)</li>
+      <li><strong>Zero Comparisons</strong>: Not a bug but expected behavior for algorithms like Counting Sort that sort without directly comparing array elements</li>
       <li><strong>Constant Additional Memory Usage (0 bytes)</strong>: Indicative of in-place algorithms</li>
     </ul>
     
