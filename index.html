@@ -282,6 +282,38 @@ to { opacity: 0; visibility: hidden; }
     max-width: none;
   }
 
+/* iOS Safari Fixes */
+@supports (-webkit-touch-callout: none) {
+  main.flex-1.flex.flex-col.lg\:flex-row {
+    height: auto !important;
+    min-height: calc(100vh - 72px);
+  }
+  
+  div.flex-1.p-4.bg-gray-50.overflow-y-auto {
+    max-height: calc(100vh - 150px);
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .overflow-x-auto.bg-white {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Tabellenhöhe-Fix */
+  table.min-w-full.divide-y.divide-gray-200.table-fixed {
+    height: auto !important;
+  }
+  
+  /* Verbesserte Darstellung auf kleinen Bildschirmen */
+  @media (max-width: 480px) {
+    .px-3.py-2 {
+      padding: 8px 6px !important;
+    }
+    
+    .text-xs, .text-sm {
+      font-size: 0.7rem !important;
+    }
+  }
+}
 </style>
 <script type="application/ld+json">
   {
@@ -518,17 +550,17 @@ Stop
 </div>
 <div class="overflow-x-auto bg-white">
 <table class="min-w-full divide-y divide-gray-200 table-fixed">
-<thead class="bg-gray-50 sticky top-0">
-<tr>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Algorithm</th>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Status</th>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Execution Time</th>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Comparisons</th>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Exchanges</th>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Memory Usage</th>
-<th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Rank</th>
-</tr>
-</thead>
+  <thead class="bg-gray-50 sticky top-0">
+    <tr>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Algorithm</th>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Status</th>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Execution Time</th>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Comparisons</th>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Exchanges</th>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Memory Usage</th>
+      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/7">Rank</th>
+    </tr>
+  </thead>
 <tbody id="results-table-body" class="bg-white divide-y divide-gray-200">
 <!-- Results will be populated here -->
 <tr>
@@ -1510,7 +1542,6 @@ largest = right;
 }
 }
 // If largest is not root
-comparisons++;
 if (largest !== i) {
 [arr[i], arr[largest]] = [arr[largest], arr[i]];
 swaps++;
@@ -1671,8 +1702,7 @@ counting: function(arr) {
   // Finde den Maximalwert im Array
   let max = arr[0];
   for (let i = 1; i < n; i++) {
-    comparisons++;
-    steps.push({type: 'compare', indices: [0, i]});
+    steps.push({type: 'select', index: i, value: arr[i]});// Nur Selektion, kein Vergleich
     if (arr[i] > max) {
       max = arr[i];
     }
@@ -1748,8 +1778,7 @@ bucket: function(arr) {
   // Finde Min und Max
   let min = arr[0], max = arr[0];
   for (let i = 1; i < n; i++) {
-    comparisons += 2; // Zwei Vergleiche: für min und max
-    steps.push({type: 'compare', indices: [0, i]});
+    steps.push({type: 'select', index: i, value: arr[i]});
     
     if (arr[i] < min) min = arr[i];
     if (arr[i] > max) max = arr[i];
@@ -2500,39 +2529,220 @@ function createWorker(codeString) {
   }
 })();
 
-// Automatische Anpassung für mobile Geräte
+// Verbesserte automatische Anpassung für mobile Geräte
 (function() {
-  // Initialisiere mobile Anpassung
-  function initMobileOptimization() {
-    const checkMobile = () => {
-      if (window.innerWidth < 768) { // Für Geräte mit weniger als 768px Breite
-        // Automatisch bestimmte Spalten ausblenden für mobile Ansicht
-        const hiddenColumns = ['toggle-comparisons', 'toggle-memory', 'toggle-exchanges'];
-        hiddenColumns.forEach(id => {
-          const checkbox = document.getElementById(id);
-          if (checkbox && checkbox.checked) {
-            checkbox.click(); // Trigger das Change-Event
-          }
-        });
+  // Diese Spalten können ausgeblendet werden
+  const toggleableColumns = [
+    { id: 'toggle-time', columnIndex: 2 },
+    { id: 'toggle-comparisons', columnIndex: 3 },
+    { id: 'toggle-exchanges', columnIndex: 4 },
+    { id: 'toggle-memory', columnIndex: 5 }
+  ];
+  
+  // Speichert den aktuellen Sichtbarkeitsstatus jeder Spalte
+  const columnVisibility = {
+    2: true, // Time
+    3: true, // Comparisons
+    4: true, // Exchanges
+    5: true  // Memory
+  };
+  
+  // Funktion zum Ein-/Ausblenden einer Spalte UND Setzen der entsprechenden Checkbox
+  function setColumnVisibility(columnIndex, isVisible) {
+    // Speichere den Sichtbarkeitsstatus
+    columnVisibility[columnIndex] = isVisible;
+    
+    // Checkbox finden und Status setzen
+    let correspondingToggleId = null;
+    for (const item of toggleableColumns) {
+      if (item.columnIndex === columnIndex) {
+        correspondingToggleId = item.id;
+        break;
       }
-    };
+    }
     
-    // Beim ersten Laden prüfen
-    checkMobile();
+    if (correspondingToggleId) {
+      const checkbox = document.getElementById(correspondingToggleId);
+      if (checkbox) {
+        // Status der Checkbox ändern, ohne einen Change-Event auszulösen
+        if (checkbox.checked !== isVisible) {
+          checkbox.checked = isVisible;
+        }
+      }
+    }
     
-    // Bei Größenänderung prüfen (mit Debounce für Performance)
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(checkMobile, 250);
+    // Spaltenheader ein-/ausblenden
+    const headerCells = document.querySelectorAll('table thead th');
+    if (headerCells.length > columnIndex) {
+      headerCells[columnIndex].style.display = isVisible ? '' : 'none';
+    }
+    
+    // Alle Zellen in dieser Spalte ein-/ausblenden
+    const rows = document.querySelectorAll('table tbody tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > columnIndex) {
+        cells[columnIndex].style.display = isVisible ? '' : 'none';
+      }
+    });
+    
+    // In localStorage speichern
+    if (correspondingToggleId) {
+      localStorage.setItem(correspondingToggleId, isVisible);
+    }
+  }
+  
+  // Behandlung der mobilen Ansicht
+  function adjustForMobileView() {
+    const viewportWidth = window.innerWidth;
+    
+    // Verschiedene Breakpoints für unterschiedliche Bildschirmgrößen
+    if (viewportWidth < 480) {
+      // Sehr klein: Nur wichtige Spalten
+      setColumnVisibility(2, false); // Time ausblenden
+      setColumnVisibility(3, false); // Comparisons ausblenden
+      setColumnVisibility(4, false); // Exchanges ausblenden
+      setColumnVisibility(5, false); // Memory ausblenden
+    } else if (viewportWidth < 576) {
+      // Klein: Eine Toggle-Spalte
+      setColumnVisibility(3, false); // Comparisons ausblenden
+      setColumnVisibility(4, false); // Exchanges ausblenden
+      setColumnVisibility(5, false); // Memory ausblenden
+    } else if (viewportWidth < 768) {
+      // Medium: Zwei Toggle-Spalten
+      setColumnVisibility(4, false); // Exchanges ausblenden
+      setColumnVisibility(5, false); // Memory ausblenden
+    }
+    // Bei größeren Bildschirmen Benutzereinstellungen beibehalten
+  }
+  
+  // Event-Listener für Checkbox-Änderungen
+  function setupToggleListeners() {
+    toggleableColumns.forEach(item => {
+      const checkbox = document.getElementById(item.id);
+      if (checkbox) {
+        // Vorhandene Listener entfernen, um Duplikate zu vermeiden
+        checkbox.removeEventListener('change', checkboxChangeHandler);
+        // Neuen Listener hinzufügen
+        checkbox.addEventListener('change', checkboxChangeHandler);
+        
+        // Initialen Status aus localStorage laden, falls vorhanden
+        const savedState = localStorage.getItem(item.id);
+        if (savedState !== null) {
+          const isVisible = savedState === 'true';
+          checkbox.checked = isVisible;
+          columnVisibility[item.columnIndex] = isVisible;
+          // Spalte entsprechend ein-/ausblenden
+          setColumnVisibility(item.columnIndex, isVisible);
+        }
+      }
     });
   }
   
-  // Ausführen nach DOM-Laden
+  // Handler für Checkbox-Änderungen
+  function checkboxChangeHandler(event) {
+    const checkbox = event.target;
+    const toggleId = checkbox.id;
+    
+    // Zugehörigen Spaltenindex finden
+    const item = toggleableColumns.find(item => item.id === toggleId);
+    if (item) {
+      // Spalte entsprechend ein-/ausblenden
+      setColumnVisibility(item.columnIndex, checkbox.checked);
+    }
+  }
+  
+  // MutationObserver, um dynamische Änderungen an der Tabelle zu überwachen
+  function setupTableObserver() {
+    const tableBody = document.getElementById('results-table-body');
+    if (!tableBody) return;
+    
+    // Funktion, die aufgerufen wird, wenn neue Zeilen hinzugefügt werden
+    function applyColumnVisibilityToNewRows(mutations) {
+      let rowsAdded = false;
+      
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          rowsAdded = true;
+        }
+      });
+      
+      if (rowsAdded) {
+        // Wende aktuelle Sichtbarkeitseinstellungen auf alle Zeilen an
+        toggleableColumns.forEach(item => {
+          const isVisible = columnVisibility[item.columnIndex];
+          const rows = tableBody.querySelectorAll('tr');
+          
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > item.columnIndex) {
+              cells[item.columnIndex].style.display = isVisible ? '' : 'none';
+            }
+          });
+        });
+      }
+    }
+    
+    // MutationObserver erstellen und starten
+    const observer = new MutationObserver(applyColumnVisibilityToNewRows);
+    observer.observe(tableBody, { childList: true, subtree: true });
+  }
+  
+  // WICHTIG: Den originalen updateResultsTable patchen
+  function patchUpdateResultsTable() {
+    // Die ursprüngliche Funktion speichern
+    const originalUpdateResultsTable = window.updateResultsTable || false;
+    
+    if (originalUpdateResultsTable) {
+      // Die Funktion überschreiben
+      window.updateResultsTable = function() {
+        // Originale Funktion aufrufen
+        originalUpdateResultsTable.apply(this, arguments);
+        
+        // Nach der Aktualisierung der Tabelle die Sichtbarkeitseinstellungen anwenden
+        toggleableColumns.forEach(item => {
+          const isVisible = columnVisibility[item.columnIndex];
+          
+          // Auf alle Zeilen anwenden
+          const rows = document.querySelectorAll('#results-table-body tr');
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > item.columnIndex) {
+              cells[item.columnIndex].style.display = isVisible ? '' : 'none';
+            }
+          });
+        });
+      };
+    } else {
+      // Wenn wir die Originalfunktion nicht patchen können, verwenden wir MutationObserver
+      setupTableObserver();
+    }
+  }
+  
+  // Initialisierungsfunktion
+  function init() {
+    // Toggle-Listener einrichten
+    setupToggleListeners();
+    
+    // Patch updateResultsTable oder richte MutationObserver ein
+    patchUpdateResultsTable();
+    
+    // Initialen Zustand basierend auf Bildschirmgröße festlegen
+    adjustForMobileView();
+    
+    // Bei Größenänderung anpassen
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(adjustForMobileView, 250); // Debounce
+    });
+  }
+  
+  // Nach DOM-Laden ausführen
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMobileOptimization);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    initMobileOptimization();
+    init();
   }
 })();
 </script>
@@ -3026,83 +3236,8 @@ function createWorker(codeString) {
   </div>
 `;
 
-  });
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Modal elements
-    const modalContainer = document.getElementById('modal-container');
-    const modalTitle = document.getElementById('modal-title');
-    const modalContent = document.getElementById('modal-content');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-    
-    // Button elements
-    const showDocsBtn = document.getElementById('show-docs-btn');
-    const showTermsBtn = document.getElementById('show-terms-btn');
-    const showPrivacyBtn = document.getElementById('show-privacy-btn');
-    
-    // Open modal with appropriate content
-    function openModal(title, contentHTML) {
-      modalTitle.textContent = title;
-      modalContent.innerHTML = contentHTML;
-      modalContainer.classList.remove('hidden');
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
-    }
-    
-    // Close modal
-    function closeModal() {
-      modalContainer.classList.add('hidden');
-      document.body.style.overflow = ''; // Allow scrolling again
-    }
-    
-    // Event listeners for buttons
-    if (showDocsBtn) {
-      showDocsBtn.addEventListener('click', function() {
-        openModal('Documentation', documentationContent);
-      });
-    }
-    
-    if (showTermsBtn) {
-      showTermsBtn.addEventListener('click', function() {
-        openModal('Terms of Use', termsContent);
-      });
-    }
-    
-    if (showPrivacyBtn) {
-      showPrivacyBtn.addEventListener('click', function() {
-        openModal('Privacy Policy', privacyContent);
-      });
-    }
-    
-    // Close modal
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', closeModal);
-    }
-    
-    if (modalCloseBtn) {
-      modalCloseBtn.addEventListener('click', closeModal);
-    }
-    
-    // Close modal on click outside
-    modalContainer.addEventListener('click', function(event) {
-      if (event.target === modalContainer) {
-        closeModal();
-      }
-    });
-    
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape' && !modalContainer.classList.contains('hidden')) {
-        closeModal();
-      }
-    });
-    
-    // === Modal Contents ===
-    
-    // Terms of Use
-    const termsContent = `
+// Terms of Use
+const termsContent = `
       <div class="prose prose-sm max-w-none">
         <h1>Terms of Use</h1>
         
@@ -3145,7 +3280,7 @@ function createWorker(codeString) {
         <p>Last updated: April 27, 2025</p>
       </div>
     `;
-    
+
   });
 </script>
 </body>
